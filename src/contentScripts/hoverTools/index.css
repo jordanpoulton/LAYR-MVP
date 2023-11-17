@@ -37,7 +37,7 @@
 }
 
 .highlighter--icon-copy {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/images/file_copy.svg');
+    background-image:url('chrome-extension://__MSG_@@extension_id__/images/thumb-up-outlined.svg');
 }
 
 .highlighter--icon-delete {
@@ -45,5 +45,5 @@
 }
 
 .highlighter--icon-change-color {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/images/color_lens.svg');
+    background-image:url('chrome-extension://__MSG_@@extension_id__/images/thumb-down-outlined.svg');
 }

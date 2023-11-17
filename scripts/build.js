@@ -13,10 +13,10 @@ function exec(command) {
 }
 
 // Stash and checkout master
-const stashOutput = exec("git stash save --include-untracked");
-const stashed = !stashOutput.match(/No local changes to save/);
-const branch = exec("git rev-parse --abbrev-ref HEAD").trim();
-exec("git checkout master");
+// const stashOutput = exec("git stash save --include-untracked");
+// const stashed = !stashOutput.match(/No local changes to save/);
+// const branch = exec("git rev-parse --abbrev-ref HEAD").trim();
+// exec("git checkout master");
 
 try {
     // Create the 'releases' directory if it does not already exist:
@@ -49,6 +49,6 @@ try {
     archive.finalize();
 } finally {
     // Return back to the original state
-    exec(`git checkout ${branch}`);
-    if (stashed) exec("git stash pop");
+    // exec(`git checkout ${branch}`);
+    // if (stashed) exec("git stash pop");
 }

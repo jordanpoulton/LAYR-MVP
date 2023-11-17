@@ -1,7 +1,6 @@
 import {
     HIGHLIGHT_CLASS,
     updateColor as updateHighlightColor,
-    remove as removeHighlight,
 } from '../highlight/index.js';
 
 let hoverToolEl = null;
@@ -10,7 +9,7 @@ let currentHighlightEl = null;
 let highlightClicked = false;
 let copyBtnEl = null;
 let changeColorBtnEl = null;
-let deleteBtnEl = null;
+// let deleteBtnEl = null;
 
 function initializeHoverTools() {
     $.get(chrome.runtime.getURL('src/contentScripts/hoverTools/index.html'), (data) => {
@@ -20,10 +19,10 @@ function initializeHoverTools() {
         hoverToolEl[0].addEventListener('mouseleave', onHighlightMouseLeave);
 
         copyBtnEl = hoverToolEl.find('.highlighter--icon-copy')[0];
-        deleteBtnEl = hoverToolEl.find('.highlighter--icon-delete')[0];
+        // deleteBtnEl = hoverToolEl.find('.highlighter--icon-delete')[0];
         changeColorBtnEl = hoverToolEl.find('.highlighter--icon-change-color')[0];
         copyBtnEl.addEventListener('click', onCopyBtnClicked);
-        deleteBtnEl.addEventListener('click', onDeleteBtnClicked);
+        // deleteBtnEl.addEventListener('click', onDeleteBtnClicked);
         changeColorBtnEl.addEventListener('click', onChangeColorBtnClicked);
     });
 
@@ -147,14 +146,14 @@ function onCopyBtnClicked() {
     chrome.runtime.sendMessage({ action: 'track-event', trackCategory: 'highlight-action', trackAction: 'copy' });
 }
 
-function onDeleteBtnClicked() {
-    const highlightId = currentHighlightEl.getAttribute('data-highlight-id');
-    removeHighlight(highlightId);
+// function onDeleteBtnClicked() {
+//     const highlightId = currentHighlightEl.getAttribute('data-highlight-id');
+//     removeHighlight(highlightId);
 
-    getHoverToolEl()?.hide();
-    hoverToolTimeout = null;
-    chrome.runtime.sendMessage({ action: 'track-event', trackCategory: 'highlight-action', trackAction: 'delete' });
-}
+//     getHoverToolEl()?.hide();
+//     hoverToolTimeout = null;
+//     chrome.runtime.sendMessage({ action: 'track-event', trackCategory: 'highlight-action', trackAction: 'delete' });
+// }
 
 
 // feature: change color on popup menu
