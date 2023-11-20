@@ -1,17 +1,18 @@
-import getCurrentColor from './getCurrentColor.js';
+import { trackEvent } from "../analytics.js";
+import { executeInCurrentTab } from "../utils.js";
 
-import { trackEvent } from '../analytics.js';
-import { executeInCurrentTab } from '../utils.js';
+function highlightText() {
+  trackEvent("highlight-action", "highlight");
 
-async function highlightText() {
-    trackEvent('highlight-action', 'highlight');
+  function contentScriptHighlightText(currentColor) {
+    window.highlighterAPI.highlight.create(currentColor);
+  }
 
-    function contentScriptHighlightText(currentColor) {
-        window.highlighterAPI.highlight.create(currentColor);
-    }
-
-    const currentColor = await getCurrentColor();
-    executeInCurrentTab({ func: contentScriptHighlightText, args: [currentColor] });
+  const currentColor = { color: "#44ff93" };
+  executeInCurrentTab({
+    func: contentScriptHighlightText,
+    args: [currentColor],
+  });
 }
 
 export default highlightText;

@@ -14,9 +14,13 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
+    "watch": "node scripts/watch.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "release": "node scripts/release.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1"
   }
 }

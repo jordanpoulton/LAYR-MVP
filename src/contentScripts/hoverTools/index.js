@@ -1,14 +1,14 @@
 import {
     HIGHLIGHT_CLASS,
-    updateColor as updateHighlightColor,
 } from '../highlight/index.js';
+import { getHighlightById, updateLikeCount } from '../utils/storageManager.js';
 
 let hoverToolEl = null;
 let hoverToolTimeout = null;
 let currentHighlightEl = null;
 let highlightClicked = false;
-let copyBtnEl = null;
-let changeColorBtnEl = null;
+let likeBtn = null;
+let dislikeBtn = null;
 // let deleteBtnEl = null;
 
 function initializeHoverTools() {
@@ -18,18 +18,17 @@ function initializeHoverTools() {
         hoverToolEl[0].addEventListener('mouseenter', onHoverToolMouseEnter);
         hoverToolEl[0].addEventListener('mouseleave', onHighlightMouseLeave);
 
-        copyBtnEl = hoverToolEl.find('.highlighter--icon-copy')[0];
+        likeBtn = hoverToolEl.find('.highlighter--icon-like')[0];
         // deleteBtnEl = hoverToolEl.find('.highlighter--icon-delete')[0];
-        changeColorBtnEl = hoverToolEl.find('.highlighter--icon-change-color')[0];
-        copyBtnEl.addEventListener('click', onCopyBtnClicked);
+        dislikeBtn = hoverToolEl.find('.highlighter--icon-dislike')[0];
+        likeBtn.addEventListener('click', onLikeBtnClicked);
         // deleteBtnEl.addEventListener('click', onDeleteBtnClicked);
-        changeColorBtnEl.addEventListener('click', onChangeColorBtnClicked);
+        dislikeBtn.addEventListener('click', onDislikeBtnClicked);
     });
 
     // Allow clicking outside of a highlight to unselect
     window.addEventListener('click', (e) => {
         if (e.target.classList?.contains(HIGHLIGHT_CLASS)) return;
-        if (e.target.classList?.contains('highlighter--icon-change-color')) return;
         hide();
     });
 
@@ -65,7 +64,6 @@ function getHoverToolEl() {
 function onHighlightMouseEnterOrClick(e) {
     const newHighlightEl = e.target;
     const newHighlightId = newHighlightEl.getAttribute('data-highlight-id');
-
     // If the previous action was a click but now it's a mouseenter, don't do anything
     if (highlightClicked && e.type !== 'click') return;
 
@@ -75,7 +73,6 @@ function onHighlightMouseEnterOrClick(e) {
     if (hoverToolTimeout !== null) {
         clearTimeout(hoverToolTimeout);
         hoverToolTimeout = null;
-
         if (newHighlightId === currentHighlightEl.getAttribute('data-highlight-id')) return;
     }
 
@@ -85,8 +82,17 @@ function onHighlightMouseEnterOrClick(e) {
     moveToolbarToHighlight(newHighlightEl, e.clientX);
 
     // Remove any previous borders and add a border to the highlight (by id) to clearly see what was selected
+    updateLikeDislikeCounts(newHighlightId);
     $('.highlighter--hovered').removeClass('highlighter--hovered');
     $(`.${HIGHLIGHT_CLASS}[data-highlight-id='${newHighlightId}']`).addClass('highlighter--hovered');
+}
+
+async function updateLikeDislikeCounts(highlightId) {
+    const highlight = await getHighlightById(highlightId);
+    if (highlight) {
+        document.getElementById('like-count').textContent = highlight.likes || 0;
+        document.getElementById('dislike-count').textContent = highlight.dislikes || 0;
+    }
 }
 
 function onHighlightMouseLeave() {
@@ -138,29 +144,14 @@ function onHoverToolMouseEnter() {
     }
 }
 
-function onCopyBtnClicked() {
+function onLikeBtnClicked() {
     const highlightId = currentHighlightEl.getAttribute('data-highlight-id');
-    const highlights = document.querySelectorAll(`.${HIGHLIGHT_CLASS}[data-highlight-id='${highlightId}']`);
-    const highlightText = Array.from(highlights).map((el) => el.textContent.replace(/\s+/ugm, ' ')).join(''); // clean up whitespace
-    navigator.clipboard.writeText(highlightText);
-    chrome.runtime.sendMessage({ action: 'track-event', trackCategory: 'highlight-action', trackAction: 'copy' });
+    updateLikeCount(highlightId, window.location.hostname + window.location.pathname, window.location.pathname, true);
 }
 
-// function onDeleteBtnClicked() {
-//     const highlightId = currentHighlightEl.getAttribute('data-highlight-id');
-//     removeHighlight(highlightId);
-
-//     getHoverToolEl()?.hide();
-//     hoverToolTimeout = null;
-//     chrome.runtime.sendMessage({ action: 'track-event', trackCategory: 'highlight-action', trackAction: 'delete' });
-// }
-
-
-// feature: change color on popup menu
-function onChangeColorBtnClicked() {
+function onDislikeBtnClicked() {
     const highlightId = currentHighlightEl.getAttribute('data-highlight-id');
-    updateHighlightColor(highlightId);
-    chrome.runtime.sendMessage({ action: 'track-event', trackCategory: 'highlight-action', trackAction: 'change-color' });
+    updateLikeCount(highlightId, window.location.hostname + window.location.pathname, window.location.pathname, false);
 }
 
 export {
