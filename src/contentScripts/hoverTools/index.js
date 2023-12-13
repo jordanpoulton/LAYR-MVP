@@ -12,7 +12,7 @@ let dislikeBtn = null;
 // let deleteBtnEl = null;
 
 function initializeHoverTools() {
-    $.get(chrome.runtime.getURL('src/contentScripts/hoverTools/index.html'), (data) => {
+    $.get(chrome.runtime.getURL('../content_script/index.html'), (data) => {
         hoverToolEl = $(data);
         hoverToolEl.hide();
         hoverToolEl[0].addEventListener('mouseenter', onHoverToolMouseEnter);

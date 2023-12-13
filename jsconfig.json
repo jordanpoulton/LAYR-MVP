@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "moduleResolution": "bundler",
+      "module": "es2022",
+      "esModuleInterop": true,
+      "sourceMap": false,
+      "outDir": "dist/js",
+      "noEmitOnError": true,
+    }
+  }
+  

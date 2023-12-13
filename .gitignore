@@ -10,3 +10,8 @@ releases/
 .ds_store
 
 build/
+
+dist/
+
+.vscode/
+

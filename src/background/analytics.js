@@ -1,27 +1,21 @@
-import { GA_MEASUREMENT_ID, GA_API_SECRET } from '../../config/secrets.js';
-
-// Code slightly adapted from https://github.com/GoogleChrome/chrome-extensions-samples/blob/main/functional-samples/tutorial.google-analytics/scripts/google-analytics.js
-
-const GA_ENDPOINT = 'https://www.google-analytics.com/mp/collect';
-
 const DEFAULT_ENGAGEMENT_TIME_MSEC = 100;
 // Duration of inactivity after which a new session is created
 const SESSION_EXPIRATION_IN_MIN = 30;
 
-function generateUUID() {
-  return crypto.randomUUID();
-}
+// function generateUUID() {
+//   return crypto.randomUUID();
+// }
 
-async function clientId() {
-  // Note that we don't use the 'sync' storage here as we want a separate ID
-  // per device
-  let { uuid } = await chrome.storage.local.get('uuid');
-  if (uuid) return uuid;
+// async function clientId() {
+//   // Note that we don't use the 'sync' storage here as we want a separate ID
+//   // per device
+//   let { uuid } = await chrome.storage.local.get('uuid');
+//   if (uuid) return uuid;
 
-  uuid = generateUUID();
-  chrome.storage.local.set({ uuid });
-  return uuid;
-}
+//   uuid = generateUUID();
+//   chrome.storage.local.set({ uuid });
+//   return uuid;
+// }
 
 async function sessionId() {
   // Use storage.session because it is only in memory
@@ -57,34 +51,38 @@ async function trackEvent(name, action, label = null, value = null, extraParams 
   // Configure session id and engagement time if not present, for more details see:
   // https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag#recommended_parameters_for_reports
   if (!extraParams.session_id) {
+    // eslint-disable-next-line require-atomic-updates
     extraParams.session_id = await sessionId();
   }
   if (!extraParams.engagement_time_msec) {
     extraParams.engagement_time_msec = DEFAULT_ENGAGEMENT_TIME_MSEC;
   }
+  // eslint-disable-next-line no-console
+  console.log("trackEvent", name, action, label, value, extraParams);
 
   try {
-    await fetch(
-      `${GA_ENDPOINT}?measurement_id=${GA_MEASUREMENT_ID}&api_secret=${GA_API_SECRET}`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          client_id: await clientId(),
-          events: [
-            {
-              name: name.replace("-", "_"),
-              params: {
-                action,
-                ...(label && { label }),
-                ...(value !== undefined && value !== null && { value }),
-                ...extraParams,
-              },
-            },
-          ],
-        }),
-      },
-    );
+    // await fetch(
+    //   `${GA_ENDPOINT}?measurement_id=${GA_MEASUREMENT_ID}&api_secret=${GA_API_SECRET}`,
+    //   {
+    //     method: 'POST',
+    //     body: JSON.stringify({
+    //       client_id: await clientId(),
+    //       events: [
+    //         {
+    //           name: name.replace("-", "_"),
+    //           params: {
+    //             action,
+    //             ...(label && { label }),
+    //             ...(value !== undefined && value !== null && { value }),
+    //             ...extraParams,
+    //           },
+    //         },
+    //       ],
+    //     }),
+    //   },
+    // );
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.error('Google Analytics request failed with an exception', e);
   }
 }

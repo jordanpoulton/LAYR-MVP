@@ -34,7 +34,6 @@ rules:
   brace-style:
     - error
     - 1tbs
-  camelcase: error
   class-methods-use-this: error
   comma-dangle:
     - error
@@ -151,7 +150,6 @@ rules:
   no-ternary: 'off'
   no-throw-literal: error
   no-trailing-spaces: error
-  no-undef-init: error
   no-underscore-dangle: 'off'
   no-unmodified-loop-condition: error
   no-unneeded-ternary: error
@@ -194,10 +192,10 @@ rules:
   prefer-template: error
   quote-props: 'off'
   quotes: 'off'
+  no-undef: 'off'
   radix: error
   require-atomic-updates: error
   require-await: error
-  require-unicode-regexp: error
   rest-spread-spacing: error
   semi: error
   semi-spacing:
@@ -216,9 +214,6 @@ rules:
     - never
   space-infix-ops: error
   space-unary-ops: error
-  spaced-comment:
-    - error
-    - always
   strict: 'off'
   switch-colon-spacing: error
   symbol-description: error
@@ -235,10 +230,5 @@ rules:
   yoda:
     - error
     - never
-  import/order: ["error", {
-      "groups": ["index", "sibling", "parent", "internal", "external", "builtin", "object", "type"],
-      "newlines-between": "always",
-      "alphabetize": { "order": "asc", "caseInsensitive": true },
-    }]
   import/exports-last: error
   import/default: 'off'

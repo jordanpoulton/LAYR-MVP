@@ -115,6 +115,10 @@ async function getCurrentUser() {
     id: crypto.randomUUID(),
     createdAt: new Date(),
   };
+  // chrome.runtime.sendMessage({
+  //   user: { id: newUser.id, createdAt: newUser.createdAt },
+  //   action: "create-user",
+  // });
   chrome.storage.local.set({ user: newUser });
   return newUser;
 }

@@ -23,9 +23,11 @@ function initialize() {
   initializeKeyboardShortcutEventListeners();
   initializeMessageEventListeners();
   initializeUserOnInstallation();
+  console.log("Background.js Initialized");
 }
 
 function initializeContextMenus() {
+  console.log("initializeContextMenus");
   // Add option when right-clicking
   chrome.runtime.onInstalled.addListener(async () => {
     // remove existing menu items
@@ -204,6 +206,7 @@ function initializeMessageEventListeners() {
       case "show-highlight":
         return showHighlight(request.highlightId);
       case "get-current-color":
+        debugger;
         wrapResponse(getCurrentColor(), sendResponse);
         return true; // return asynchronously
       case "get-color-options":
@@ -226,4 +229,4 @@ function initializeUserOnInstallation() {
   });
 }
 
-export { initialize };
+initialize();

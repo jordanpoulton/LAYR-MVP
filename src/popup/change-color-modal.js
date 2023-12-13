@@ -32,6 +32,7 @@ function onUseTextColorValueChanged(e) {
 }
 
 function confirm(e) {
+    debugger;
     e.preventDefault();
 
     const data = new FormData(e.target);

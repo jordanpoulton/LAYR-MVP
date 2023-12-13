@@ -15,4 +15,4 @@ function exposeAPI() {
     window.highlighterAPI = api;
 }
 
-export { initialize };
+initialize();
