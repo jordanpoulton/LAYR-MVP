@@ -31,5 +31,8 @@
     "watch": "webpack --config webpack/webpack.dev.js --watch",
     "build": "webpack --config webpack/webpack.prod.js",
     "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "firebase": "^10.7.1"
   }
 }

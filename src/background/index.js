@@ -13,9 +13,10 @@ import {
   toggleHighlighterCursor,
 } from "./actions/index.js";
 import { trackEvent } from "./analytics.js";
+import { loginUser, writeUserData } from "./firebase-db/firebase.js";
 import { wrapResponse } from "./utils.js";
 
-function initialize() {
+async function initialize() {
   initializeContextMenus();
   initializeContextMenuEventListeners();
   initializeExtensionEventListeners();
@@ -23,7 +24,6 @@ function initialize() {
   initializeKeyboardShortcutEventListeners();
   initializeMessageEventListeners();
   initializeUserOnInstallation();
-  console.log("Background.js Initialized");
 }
 
 function initializeContextMenus() {
@@ -206,11 +206,13 @@ function initializeMessageEventListeners() {
       case "show-highlight":
         return showHighlight(request.highlightId);
       case "get-current-color":
-        debugger;
         wrapResponse(getCurrentColor(), sendResponse);
         return true; // return asynchronously
       case "get-color-options":
         wrapResponse(getColorOptions(), sendResponse);
+        return true; // return asynchronously
+      case "login-user":
+        wrapResponse(loginUser(request.payload), sendResponse);
         return true; // return asynchronously
     }
   });
