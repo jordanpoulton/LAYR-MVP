@@ -13,7 +13,8 @@ import {
   toggleHighlighterCursor,
 } from "./actions/index.js";
 import { trackEvent } from "./analytics.js";
-import { loginUser, writeUserData } from "./firebase-db/firebase.js";
+import { getHighlightById, storeHighlightInFirebase } from "./firebase-db/highlights-actions.db.js";
+import { loginUser } from "./firebase-db/user-actions.db.js";
 import { wrapResponse } from "./utils.js";
 
 async function initialize() {
@@ -213,6 +214,12 @@ function initializeMessageEventListeners() {
         return true; // return asynchronously
       case "login-user":
         wrapResponse(loginUser(request.payload), sendResponse);
+        return true; // return asynchronously
+      case "store-highlight-in-firebase":
+        wrapResponse(storeHighlightInFirebase(request.payload), sendResponse);
+        return true; // return asynchronously
+      case "get-highlight-by-id":
+        wrapResponse(getHighlightById(request.uuid), sendResponse);
         return true; // return asynchronously
     }
   });

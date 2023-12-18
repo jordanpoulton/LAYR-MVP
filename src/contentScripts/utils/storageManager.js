@@ -3,6 +3,7 @@
 import { addHighlightError } from "./errorManager.js";
 
 import { highlight } from "../highlight/index.js";
+import { getFromBackgroundPage } from "./getFromBackgroundPage.js";
 
 const STORE_FORMAT_VERSION = chrome.runtime.getManifest().version;
 
@@ -34,10 +35,15 @@ async function store(selection, container, url, href, color, textColor) {
     likedBy: [user.id],
     dislikes: 0,
     dislikedBy: [],
+    userId: user.username,
   };
 
   highlights[url].push(newHighlight);
   chrome.storage.local.set({ highlights });
+  chrome.runtime.sendMessage({
+    action: "store-highlight-in-firebase",
+    payload: newHighlight,
+  }); // See src/background/firebase-db/highlights-actions.db.js for the implementation of
 
   // Return the index of the new highlight:
   return newHighlight.uuid;
@@ -99,33 +105,30 @@ async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
       highlightObject
     );
     await chrome.storage.local.set({ highlights });
-    const existingHighlight = $(`.highlighter--highlighted[data-highlight-id='${highlightIndex}']`);
-    $('.highlighter--hovered').removeClass('highlighter--hovered');
+    const existingHighlight = $(
+      `.highlighter--highlighted[data-highlight-id='${highlightIndex}']`
+    );
+    $(".highlighter--hovered").removeClass("highlighter--hovered");
 
-    existingHighlight.css('backgroundColor', highlightObject.color); // Change the background color attribute
-    existingHighlight.css('color', highlightObject.textColor); // Also change the text color
+    existingHighlight.css("backgroundColor", highlightObject.color); // Change the background color attribute
+    existingHighlight.css("color", highlightObject.textColor); // Also change the text color
   }
 }
 
 async function getCurrentUser() {
-  const { user } = await chrome.storage.local.get({ user: {} });
-  if (user.id) return user;
-
-  const newUser = {
-    id: crypto.randomUUID(),
-    createdAt: new Date(),
-  };
-  // chrome.runtime.sendMessage({
-  //   user: { id: newUser.id, createdAt: newUser.createdAt },
-  //   action: "create-user",
-  // });
-  chrome.storage.local.set({ user: newUser });
-  return newUser;
+  const { user } = await chrome.storage.sync.get({ user: {} });
+  return user;
 }
 
 async function getHighlightById(uuid) {
   const { highlights } = await chrome.storage.local.get({ highlights: {} });
-
+  debugger;
+  const highlight = await getFromBackgroundPage({
+    action: "get-highlight-by-id",
+    uuid,
+  });
+  debugger;
+  console.log(highlight);
   // Iterate through all URLs
   // eslint-disable-next-line guard-for-in
   for (const url in highlights) {

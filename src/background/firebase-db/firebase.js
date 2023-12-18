@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase } from "firebase/database";
 
 // TODO: Replace the following with your app's Firebase project configuration
 // See: https://firebase.google.com/docs/web/learn-more#config-object
@@ -22,15 +22,4 @@ const app = initializeApp(firebaseConfig);
 // Initialize Realtime Database and get a reference to the service
 const db = getDatabase(app);
 
-function loginUser({ username, email }) {
-  set(ref(db, "users/" + username), {
-    username,
-    email,
-  });
-  return {
-    username,
-    email,
-  };
-}
-
-export { db, loginUser };
+export { db };
