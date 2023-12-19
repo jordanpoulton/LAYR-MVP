@@ -32,12 +32,11 @@ async function store(selection, container, url, href, color, textColor) {
     uuid: crypto.randomUUID(),
     createdAt: Date.now(),
     likes: 1,
-    likedBy: [user.id],
+    likedBy: [user.username, ""],
     dislikes: 0,
-    dislikedBy: [],
+    dislikedBy: [""],
     userId: user.username,
   };
-
   highlights[url].push(newHighlight);
   chrome.storage.local.set({ highlights });
   chrome.runtime.sendMessage({
@@ -57,8 +56,10 @@ async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
   ]);
 
   if (highlightObject) {
-    const alreadyLiked = highlightObject.likedBy.includes(user.id);
-    const alreadyDisliked = highlightObject.dislikedBy.includes(user.id);
+    const alreadyLiked = highlightObject?.likedBy.includes(user.username);
+    const alreadyDisliked = highlightObject?.dislikedBy?.includes(
+      user.username
+    );
 
     if (like) {
       if (alreadyLiked) return; // User already liked this highlight
@@ -66,28 +67,28 @@ async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
       // Remove dislike if previously disliked
       if (alreadyDisliked) {
         highlightObject.dislikedBy = highlightObject.dislikedBy.filter(
-          (id) => id !== user.id
+          (username) => username !== user.username
         );
         highlightObject.dislikes = Math.max(highlightObject.dislikes - 1, 0);
       }
 
       // Add like
       highlightObject.likes += 1;
-      highlightObject.likedBy.push(user.id);
+      highlightObject.likedBy.push(user.username);
     } else {
       if (alreadyDisliked) return; // User already disliked this highlight
 
       // Remove like if previously liked
       if (alreadyLiked) {
         highlightObject.likedBy = highlightObject.likedBy.filter(
-          (id) => id !== user.id
+          (username) => username !== user.username
         );
         highlightObject.likes = Math.max(highlightObject.likes - 1, 0);
       }
 
       // Add dislike
       highlightObject.dislikes += 1;
-      highlightObject.dislikedBy.push(user.id);
+      highlightObject.dislikedBy.push(user.username);
     }
 
     if (highlightObject.likes > highlightObject.dislikes) {
@@ -105,6 +106,10 @@ async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
       highlightObject
     );
     await chrome.storage.local.set({ highlights });
+    chrome.runtime.sendMessage({
+      action: "store-highlight-in-firebase",
+      payload: highlightObject,
+    }); // See src/background/firebase-db/highlights-actions.db.js for the implementation of
     const existingHighlight = $(
       `.highlighter--highlighted[data-highlight-id='${highlightIndex}']`
     );
@@ -121,23 +126,12 @@ async function getCurrentUser() {
 }
 
 async function getHighlightById(uuid) {
-  const { highlights } = await chrome.storage.local.get({ highlights: {} });
-  debugger;
   const highlight = await getFromBackgroundPage({
     action: "get-highlight-by-id",
     uuid,
   });
-  debugger;
-  console.log(highlight);
-  // Iterate through all URLs
-  // eslint-disable-next-line guard-for-in
-  for (const url in highlights) {
-    // Iterate through all highlights for the current URL
-    for (const highlight1 of highlights[url]) {
-      if (highlight1.uuid === uuid) {
-        return highlight1; // Return the highlight if UUID matches
-      }
-    }
+  if (highlight) {
+    return highlight;
   }
 
   return null; // Return null if no match is found

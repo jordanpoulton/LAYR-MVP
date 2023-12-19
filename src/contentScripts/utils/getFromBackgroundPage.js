@@ -2,7 +2,6 @@
 function getFromBackgroundPage(payload, ignoreErrors = true) {
     return new Promise((resolve, reject) => {
         chrome.runtime.sendMessage(payload, (response) => {
-            debugger;
             const error = chrome.runtime.lastError;
             if (!ignoreErrors && error) {
                 reject(error);

@@ -20,7 +20,6 @@ async function storeHighlightInFirebase(newHighlight) {
 
 async function getHighlightById(id) {
   try {
-    debugger;
     // Reference to the highlights node in Firebase
     const highlightsRef = ref(db, "highlights");
 
