@@ -2,7 +2,7 @@ import { trackEvent } from '../analytics.js';
 import { executeInCurrentTab } from '../utils.js';
 
 function toggleHighlighterCursor() {
-    trackEvent('highlight-action', 'toggle-cursor');
+         trackEvent('highlight-action', 'toggle-cursor');
 
     function contentScriptToggleHighlighterCursor() {
         window.highlighterAPI.highlighterCursor.toggle();

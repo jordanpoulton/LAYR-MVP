@@ -13,7 +13,10 @@ import {
   toggleHighlighterCursor,
 } from "./actions/index.js";
 import { trackEvent } from "./analytics.js";
-import { getHighlightById, storeHighlightInFirebase } from "./firebase-db/highlights-actions.db.js";
+import {
+  getHighlightById,
+  storeHighlightInFirebase,
+} from "./firebase-db/highlights-actions.db.js";
 import { loginUser } from "./firebase-db/user-actions.db.js";
 import { wrapResponse } from "./utils.js";
 
@@ -140,6 +143,7 @@ function initializeKeyboardShortcutEventListeners() {
         highlightText();
         break;
       case "toggle-highlighter-cursor":
+         
         trackEvent("toggle-cursor-source", "keyboard-shortcut");
         toggleHighlighterCursor();
         break;
@@ -195,6 +199,7 @@ function initializeMessageEventListeners() {
         editColor(request.colorTitle, request.color, request.textColor);
         return;
       case "toggle-highlighter-cursor":
+         
         trackEvent("toggle-cursor-source", request.source);
         toggleHighlighterCursor();
         return;
@@ -234,6 +239,20 @@ function initializeUserOnInstallation() {
         createdAt: new Date(),
       };
       chrome.storage.local.set({ user });
+      // refresh all the tabs
+      chrome.tabs.query({}, (tabs) => {
+        tabs.forEach((tab) => {
+          chrome.tabs.reload(tab.id);
+        });
+      });
+    }
+    if (details.reason === "update") {
+      // refresh all the tabs
+      chrome.tabs.query({}, (tabs) => {
+        tabs.forEach((tab) => {
+          chrome.tabs.reload(tab.id);
+        });
+      });
     }
   });
 }

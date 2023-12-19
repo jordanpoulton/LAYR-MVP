@@ -4,6 +4,8 @@ import { addHighlightError } from "./errorManager.js";
 
 import { highlight } from "../highlight/index.js";
 import { getFromBackgroundPage } from "./getFromBackgroundPage.js";
+import { off, onValue, ref } from "firebase/database";
+import { db } from "../../background/firebase-db/firebase.js";
 
 const STORE_FORMAT_VERSION = chrome.runtime.getManifest().version;
 
@@ -12,7 +14,7 @@ const GREEN_COLOR = "#44ff93";
 
 let alternativeUrlIndexOffset = 0; // Number of elements stored in the alternativeUrl Key. Used to map highlight indices to correct key
 
-async function store(selection, container, url, href, color, textColor) {
+async function store( selection, container, url, href, color, textColor) {
   const { highlights } = await chrome.storage.local.get({ highlights: {} });
   const user = await getCurrentUser();
 
@@ -144,6 +146,7 @@ async function update(
   newColor,
   newTextColor
 ) {
+   
   const { highlights } = await chrome.storage.local.get({ highlights: {} });
 
   let urlToUse = url;
@@ -165,26 +168,77 @@ async function update(
   }
 }
 
-// alternativeUrl is optional
+async function setupFirebaseListeners(url, callback) {
+  const urlRef = ref(db, "highlights/");
+
+  // Listener for changes in the highlights
+  onValue(urlRef, (snapshot) => {
+    const highlights = snapshot.val() ? Object.values(snapshot.val()) : [];
+    callback(highlights);
+  });
+
+  // Return a function to detach the listener when no longer needed
+  return () => off(urlRef);
+}
+
+// // alternativeUrl is optional
+// async function loadAll(url, alternativeUrl) {
+//   const result = await chrome.storage.local.get({ highlights: {} });
+//   let highlights = [];
+
+//   // Because of a bug in an older version of the code, some highlights were stored
+//   // using a key that didn't correspond to the full page URL. To fix this, if the
+//   // alternativeUrl exists, try to load highlights from there as well
+//   if (alternativeUrl) {
+//     highlights = highlights.concat(result.highlights[alternativeUrl] || []);
+//   }
+//   alternativeUrlIndexOffset = highlights.length;
+
+//   highlights = highlights.concat(result.highlights[url] || []);
+
+//   if (!highlights) return;
+
+//   for (let i = 0; i < highlights.length; i++) {
+//     load(highlights[i], highlights[i].uuid);
+//   }
+// }
+
 async function loadAll(url, alternativeUrl) {
-  const result = await chrome.storage.local.get({ highlights: {} });
-  let highlights = [];
+  // Setup listeners for the main URL
+  const detachMainUrlListener = await setupFirebaseListeners(
+    url,
+    (highlights) => {
+      if(!highlights) return [];
+      // Load highlights for the main URL
+      highlights.forEach((highlight) => {
+        load(highlight, highlight.uuid);
+      });
+    }
+  );
 
-  // Because of a bug in an older version of the code, some highlights were stored
-  // using a key that didn't correspond to the full page URL. To fix this, if the
-  // alternativeUrl exists, try to load highlights from there as well
+  let detachAlternativeUrlListener;
+
   if (alternativeUrl) {
-    highlights = highlights.concat(result.highlights[alternativeUrl] || []);
+    // Setup listeners for the alternative URL
+    detachAlternativeUrlListener = await setupFirebaseListeners(
+      alternativeUrl,
+      (highlights) => { 
+        if(!highlights) return [];
+        // Load highlights for the alternative URL
+        highlights.forEach((highlight) => {
+          load(highlight, highlight.uuid);
+        });
+      }
+    );
   }
-  alternativeUrlIndexOffset = highlights.length;
 
-  highlights = highlights.concat(result.highlights[url] || []);
-
-  if (!highlights) return;
-
-  for (let i = 0; i < highlights.length; i++) {
-    load(highlights[i], highlights[i].uuid);
-  }
+  // Return a function to detach listeners when no longer needed
+  return () => {
+    detachMainUrlListener();
+    if (detachAlternativeUrlListener) {
+      detachAlternativeUrlListener();
+    }
+  };
 }
 
 // noErrorTracking is optional
