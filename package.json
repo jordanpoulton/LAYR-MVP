@@ -1,6 +1,6 @@
 {
   "name": "LAYR",
-  "version": "4.0.5",
+  "version": "1.0.0",
   "description": "Chrome extension to highlight text on websites with a simple right-click or keyboard shortcut. Saves highlights on your device.",
   "main": "index.js",
   "author": "",

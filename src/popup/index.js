@@ -1,11 +1,8 @@
 import { open as openChangeColorModal } from "./change-color-modal.js";
-import { open as openRemoveAllModal } from "./remove-all-modal.js";
 import { open as openLoginModal } from "./login-modal.js";
 import { getFromBackgroundPage } from "./utils.js";
 
 const highlightButton = document.getElementById("toggle-button");
-const removeAllButton = document.getElementById("remove-all-button");
-const copyAllButton = document.getElementById("copy-all-button");
 const closeButton = document.getElementById("close-button");
 const changeColorButton = document.getElementById("change-color-button");
 const loginLogoutBtn = document.getElementById("login-logout-btn");
@@ -56,21 +53,6 @@ function toggleHighlighterCursor() {
     { action: "toggle-highlighter-cursor", source: "popup" },
     () => window.close()
   );
-}
-
-function copyHighlights() {
-  chrome.runtime.sendMessage({
-    action: "track-event",
-    trackCategory: "highlight-action",
-    trackAction: "copy-all",
-  });
-  navigator.clipboard.writeText(highlightsListElement.innerText);
-
-  // Let the user know the copy went through
-  const checkmarkEl = document.createElement("span");
-  checkmarkEl.style.color = "#00ff00";
-  checkmarkEl.innerHTML = " &#10004;"; // Checkmark character
-  copyAllButton.prepend(checkmarkEl);
 }
 
 function showEmptyState() {
@@ -247,8 +229,6 @@ function showErrorState() {
 
 // Register Events
 highlightButton.addEventListener("click", toggleHighlighterCursor);
-copyAllButton.addEventListener("click", copyHighlights);
-removeAllButton.addEventListener("click", openRemoveAllModal);
 changeColorButton.addEventListener("click", openChangeColorModal);
 selectedColorElement.addEventListener("click", openChangeColorModal);
 
