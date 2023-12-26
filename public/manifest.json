@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "LAYR",
-    "description": "Social Platform for Web Surfers and Highlights",
+    "description": "An interactive social layer providing Like/Dislike/Comment functionality to any webpage on the internet.",
     "version": "4.0.5",
     "icons": {
         "16": "images/16.png",
@@ -38,8 +38,8 @@
     "commands": {
         "execute-highlight": {
             "suggested_key": {
-                "default": "Alt+H",
-                "mac": "MacCtrl+H"
+                "default": "Alt+L",
+                "mac": "MacCtrl+L"
             },
             "description": "Highlight selected text"
         },
