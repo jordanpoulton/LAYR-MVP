@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "My Highlighter",
-    "description": "Highlight text on websites with a simple right-click or keyboard shortcut. Saves highlights on your device.",
+    "name": "LAYR",
+    "description": "Social Platform for Web Surfers and Highlights",
     "version": "4.0.5",
     "icons": {
         "16": "images/16.png",
