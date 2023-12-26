@@ -222,7 +222,7 @@ function showErrorState() {
   } else {
     username.style.display = "none";
     username.innerText = "";
-    loginLogoutBtn.innerText = "Login";
+    loginLogoutBtn.innerText = "Join the Conversation";
     loginLogoutBtn.addEventListener("click", openLoginModal);
   }
 })();
