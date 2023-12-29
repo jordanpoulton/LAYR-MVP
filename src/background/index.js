@@ -181,28 +181,27 @@ function initializeMessageEventListeners() {
       case "highlight":
         trackEvent("highlight-source", "highlighter-cursor");
         highlightText();
-        return;
+        return sendResponse();
       case "track-event":
         trackEvent(request.trackCategory, request.trackAction);
-        return;
+        return sendResponse();
       case "remove-highlights":
         removeHighlights();
-        return;
+        return sendResponse();
       case "remove-highlight":
         removeHighlight(request.highlightId);
-        return;
+        return sendResponse();
       case "change-color":
         trackEvent("color-change-source", request.source);
         changeColor(request.color);
-        return;
+        return sendResponse();
       case "edit-color":
         editColor(request.colorTitle, request.color, request.textColor);
-        return;
+        return sendResponse();
       case "toggle-highlighter-cursor":
-         
         trackEvent("toggle-cursor-source", request.source);
         toggleHighlighterCursor();
-        return;
+        return sendResponse();
       case "get-highlights":
         wrapResponse(getHighlights(), sendResponse);
         return true; // return asynchronously
