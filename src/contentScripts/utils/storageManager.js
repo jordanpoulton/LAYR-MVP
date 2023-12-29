@@ -14,9 +14,8 @@ const GREEN_COLOR = "#44ff93";
 
 let alternativeUrlIndexOffset = 0; // Number of elements stored in the alternativeUrl Key. Used to map highlight indices to correct key
 
-async function store( selection, container, url, href, color, textColor) {
+async function store(selection, container, url, href, color, textColor, user) {
   const { highlights } = await chrome.storage.local.get({ highlights: {} });
-  const user = await getCurrentUser();
 
   if (!highlights[url]) highlights[url] = [];
 
@@ -56,6 +55,11 @@ async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
     getCurrentUser(),
     getHighlightById(highlightIndex),
   ]);
+
+  if (!user) {
+    alert("You need to be logged in to have interactions with highlights.");
+    return;
+  }
 
   if (highlightObject) {
     const alreadyLiked = highlightObject?.likedBy.includes(user.username);
@@ -146,7 +150,6 @@ async function update(
   newColor,
   newTextColor
 ) {
-   
   const { highlights } = await chrome.storage.local.get({ highlights: {} });
 
   let urlToUse = url;
@@ -208,7 +211,7 @@ async function loadAll(url, alternativeUrl) {
   const detachMainUrlListener = await setupFirebaseListeners(
     url,
     (highlights) => {
-      if(!highlights) return [];
+      if (!highlights) return [];
       // Load highlights for the main URL
       highlights.forEach((highlight) => {
         load(highlight, highlight.uuid);
@@ -222,8 +225,8 @@ async function loadAll(url, alternativeUrl) {
     // Setup listeners for the alternative URL
     detachAlternativeUrlListener = await setupFirebaseListeners(
       alternativeUrl,
-      (highlights) => { 
-        if(!highlights) return [];
+      (highlights) => {
+        if (!highlights) return [];
         // Load highlights for the alternative URL
         highlights.forEach((highlight) => {
           load(highlight, highlight.uuid);
