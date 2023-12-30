@@ -114,12 +114,6 @@ function showHighlightsTitles() {
     highlightsListElement.appendChild(highlightsListLostTitleElement);
     highlightsListElement.appendChild(noHighlightsOnOtherPagesTitleElement);
   }
-
-  // // If there are lost highlights, insert the lost highlights title before them
-  // if (lostHighlightElements.length <= 0) {
-  //   // If no lost highlights on other pages, add the 'no highlights' title
-  //   highlightsListElement.appendChild(noHighlightsOnOtherPagesTitleElement);
-  // }
 }
 
 function updateHighlightsListState() {
@@ -135,6 +129,14 @@ hideErrorState(); // Hide by default
 function showErrorState() {
   highlightsErrorStateElement.style.display = "flex";
   highlightsEmptyStateElement.style.display = "none"; // Also hide the empty state
+}
+
+function truncateText(text, wordLimit) {
+  const words = text.split(/\s+/); // Split the text into words
+  if (words.length > wordLimit) {
+    return words.slice(0, wordLimit).join(" ") + "..."; // Join the first 25 words and add ellipsis
+  }
+  return text; // Return the original text if it's short enough
 }
 
 (async function initializeHighlightsList() {
@@ -158,7 +160,7 @@ function showErrorState() {
   highlights.forEach(([highlightId, highlightText]) => {
     const newEl = document.createElement("div");
     newEl.classList.add("highlight", "current");
-    newEl.innerText = highlightText;
+    newEl.innerText = truncateText(highlightText, 25);
     newEl.addEventListener("click", () => {
       chrome.runtime.sendMessage({ action: "show-highlight", highlightId });
     });
@@ -226,7 +228,7 @@ function showErrorState() {
 
     const newEl = document.createElement("div");
     newEl.classList.add("highlight", "lost");
-    newEl.innerText = lostHighlight.string;
+    newEl.innerText = truncateText(lostHighlight.string, 25);
     const newDeleteIconEl = document.createElement("span");
     newDeleteIconEl.classList.add("material-icons", "delete-icon");
     newDeleteIconEl.innerText = "delete";
