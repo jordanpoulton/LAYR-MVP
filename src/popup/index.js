@@ -96,7 +96,7 @@ function showHighlightsTitles() {
     // If no highlights on the current page, add the 'no highlights' title
     highlightsListElement.appendChild(noHighlightsOnThisPageTitleElement);
   }
-  if(highlights.length <= 0 && lostHighlightElements.length > 0) {
+  if (highlights.length <= 0 && lostHighlightElements.length > 0) {
     // If there are lost highlights, insert the lost highlights title before them
     highlightsListElement.insertBefore(
       noHighlightsOnThisPageTitleElement,
@@ -229,6 +229,15 @@ function truncateText(text, wordLimit) {
     const newEl = document.createElement("div");
     newEl.classList.add("highlight", "lost");
     newEl.innerText = truncateText(lostHighlight.string, 25);
+    newEl.addEventListener("click", () => {
+      chrome.runtime.sendMessage({
+        action: "open-tab-and-show-highlight",
+        data: {
+          highlightId: lostHighlight.id,
+          href: lostHighlight.href,
+        },
+      });
+    });
     const newDeleteIconEl = document.createElement("span");
     newDeleteIconEl.classList.add("material-icons", "delete-icon");
     newDeleteIconEl.innerText = "delete";
