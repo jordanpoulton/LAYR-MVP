@@ -27,8 +27,8 @@ body {
 }
 
 #title-section h1 {
-  color: black;
-  font-size: 40px;
+  color: gray;
+  font-size: 30px;
   font-weight: bold;
   margin: 0 0 -6px -4px;
 
@@ -284,4 +284,41 @@ body {
   padding-left: 20px;
   font-size: 15px;
   color: #666;
+}
+
+#highlights-on-this-page-title {
+  padding-left: 20px;
+  font-size: 15px;
+  color: #666;
+}
+
+#no-highlights-on-this-page-title {
+  font-size: 13px;
+  color: #666;
+  margin: 0 18px 15px 18px;
+
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  padding: 0 45px;
+  box-sizing: border-box;
+
+  font-style: italic;
+  color: #ff7777;
+}
+
+#no-highlights-on-other-pages-title {
+  font-size: 13px;
+  color: #666;
+
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  padding: 0 45px;
+  box-sizing: border-box;
+
+  font-style: italic;
+  color: #ff7777;
 }

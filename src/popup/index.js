@@ -22,6 +22,15 @@ const highlightsErrorStateElement = document.getElementById(
 const highlightsListLostTitleElement = document.getElementById(
   "highlights-list-lost-title"
 );
+const highlightsOnThisPageTitleElement = document.getElementById(
+  "highlights-on-this-page-title"
+);
+const noHighlightsOnThisPageTitleElement = document.getElementById(
+  "no-highlights-on-this-page-title"
+);
+const noHighlightsOnOtherPagesTitleElement = document.getElementById(
+  "no-highlights-on-other-pages-title"
+);
 
 function colorChanged(colorOption) {
   const { backgroundColor, borderColor } = colorOption.style;
@@ -55,14 +64,6 @@ function toggleHighlighterCursor() {
   );
 }
 
-function showEmptyState() {
-  if (!highlightsListElement.querySelectorAll(".highlight").length) {
-    highlightsEmptyStateElement.style.display = "flex";
-  } else {
-    highlightsEmptyStateElement.style.display = "none";
-  }
-}
-
 function orderHighlights() {
   highlightsListElement.querySelectorAll(".highlight").forEach((highlight) => {
     if (highlight.classList.contains("lost")) {
@@ -73,21 +74,57 @@ function orderHighlights() {
   });
 }
 
-function showLostHighlightsTitle() {
-  highlightsListLostTitleElement.remove();
+function showHighlightsTitles() {
+  // First, clear any existing titles
+  [
+    highlightsOnThisPageTitleElement,
+    highlightsListLostTitleElement,
+    noHighlightsOnThisPageTitleElement,
+    noHighlightsOnOtherPagesTitleElement,
+  ].forEach((elem) => elem && elem.remove());
+
+  const highlights = highlightsListElement.querySelectorAll(".current");
   const lostHighlightElements = highlightsListElement.querySelectorAll(".lost");
+
+  // If there are highlights on the current page, insert the title at the top
+  highlightsListElement.insertBefore(
+    highlightsOnThisPageTitleElement,
+    highlightsListElement.firstChild // insert at the beginning
+  );
+
+  if (highlights.length <= 0 && lostHighlightElements.length <= 0) {
+    // If no highlights on the current page, add the 'no highlights' title
+    highlightsListElement.appendChild(noHighlightsOnThisPageTitleElement);
+  }
+  if(highlights.length <= 0 && lostHighlightElements.length > 0) {
+    // If there are lost highlights, insert the lost highlights title before them
+    highlightsListElement.insertBefore(
+      noHighlightsOnThisPageTitleElement,
+      lostHighlightElements[0] // insert before the first lost highlight
+    );
+  }
+
+  // If there are lost highlights, insert the lost highlights title before them
   if (lostHighlightElements.length > 0) {
     highlightsListElement.insertBefore(
       highlightsListLostTitleElement,
-      lostHighlightElements[0]
+      lostHighlightElements[0] // insert before the first lost highlight
     );
+  } else {
+    highlightsListElement.appendChild(highlightsListLostTitleElement);
+    highlightsListElement.appendChild(noHighlightsOnOtherPagesTitleElement);
   }
+
+  // // If there are lost highlights, insert the lost highlights title before them
+  // if (lostHighlightElements.length <= 0) {
+  //   // If no lost highlights on other pages, add the 'no highlights' title
+  //   highlightsListElement.appendChild(noHighlightsOnOtherPagesTitleElement);
+  // }
 }
 
 function updateHighlightsListState() {
-  showEmptyState();
   orderHighlights();
-  showLostHighlightsTitle();
+  showHighlightsTitles();
 }
 
 function hideErrorState() {
@@ -120,7 +157,7 @@ function showErrorState() {
   // Populate with new elements
   highlights.forEach(([highlightId, highlightText]) => {
     const newEl = document.createElement("div");
-    newEl.classList.add("highlight");
+    newEl.classList.add("highlight", "current");
     newEl.innerText = highlightText;
     newEl.addEventListener("click", () => {
       chrome.runtime.sendMessage({ action: "show-highlight", highlightId });
