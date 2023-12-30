@@ -1,11 +1,6 @@
 function initializeUserOnInstallation() {
   chrome.runtime.onInstalled.addListener((details) => {
     if (details.reason === "install") {
-      const user = {
-        id: crypto.randomUUID(),
-        createdAt: new Date(),
-      };
-      chrome.storage.local.set({ user });
       // refresh all the tabs
       chrome.tabs.query({}, (tabs) => {
         tabs.forEach((tab) => {
