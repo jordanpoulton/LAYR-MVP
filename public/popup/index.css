@@ -26,13 +26,23 @@ body {
   margin: 22px 22px 0 22px;
 }
 
-#title-section h1 {
-  color: gray;
+#title-details {
+  margin-left: 10px;
+  margin-top: 10px;;
+}
+
+#title {
+  color: black;
   font-size: 30px;
   font-weight: bold;
   margin: 0 0 -6px -4px;
-
   cursor: default;
+}
+
+#title-description {
+  margin-top: -10px;
+  color: gray;
+  font-size: 15px;
 }
 
 #title-section .highlighter-icon {
