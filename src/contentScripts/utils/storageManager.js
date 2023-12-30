@@ -38,8 +38,6 @@ async function store(selection, container, url, href, color, textColor, user) {
     dislikedBy: [""],
     userId: user.username,
   };
-  highlights[url].push(newHighlight);
-  chrome.storage.local.set({ highlights });
   chrome.runtime.sendMessage({
     action: "store-highlight-in-firebase",
     payload: newHighlight,
@@ -183,28 +181,6 @@ async function setupFirebaseListeners(url, callback) {
   // Return a function to detach the listener when no longer needed
   return () => off(urlRef);
 }
-
-// // alternativeUrl is optional
-// async function loadAll(url, alternativeUrl) {
-//   const result = await chrome.storage.local.get({ highlights: {} });
-//   let highlights = [];
-
-//   // Because of a bug in an older version of the code, some highlights were stored
-//   // using a key that didn't correspond to the full page URL. To fix this, if the
-//   // alternativeUrl exists, try to load highlights from there as well
-//   if (alternativeUrl) {
-//     highlights = highlights.concat(result.highlights[alternativeUrl] || []);
-//   }
-//   alternativeUrlIndexOffset = highlights.length;
-
-//   highlights = highlights.concat(result.highlights[url] || []);
-
-//   if (!highlights) return;
-
-//   for (let i = 0; i < highlights.length; i++) {
-//     load(highlights[i], highlights[i].uuid);
-//   }
-// }
 
 async function loadAll(url, alternativeUrl) {
   // Setup listeners for the main URL

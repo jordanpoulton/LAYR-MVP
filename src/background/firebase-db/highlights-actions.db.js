@@ -45,4 +45,36 @@ async function getHighlightById(id) {
   }
 }
 
-export { storeHighlightInFirebase, getHighlightById };
+async function getHighlightsNotEqualToHref({ href }) {
+  try {
+    // Reference to the highlights node in Firebase
+    const highlightsRef = ref(db, "highlights");
+
+    // Fetch all highlights
+    const snapshot = await get(highlightsRef);
+
+    if (snapshot.exists()) {
+      const allHighlights = Object.values(snapshot.val());
+
+      // Filter out the highlights with the specified href
+      const filteredHighlights = allHighlights.filter(
+        (highlight) => highlight.href !== href
+      );
+
+      filteredHighlights.sort((a, b) => b.createdAt - a.createdAt);
+
+      return filteredHighlights;
+    } else {
+      return []; // Return an empty array if no highlights are found
+    }
+  } catch (error) {
+    console.error("Error fetching highlights:", error);
+    throw error;
+  }
+}
+
+export {
+  storeHighlightInFirebase,
+  getHighlightById,
+  getHighlightsNotEqualToHref,
+};

@@ -15,6 +15,7 @@ import {
 import { trackEvent } from "./analytics.js";
 import {
   getHighlightById,
+  getHighlightsNotEqualToHref,
   storeHighlightInFirebase,
 } from "./firebase-db/highlights-actions.db.js";
 import { loginUser } from "./firebase-db/user-actions.db.js";
@@ -143,7 +144,6 @@ function initializeKeyboardShortcutEventListeners() {
         highlightText();
         break;
       case "toggle-highlighter-cursor":
-         
         trackEvent("toggle-cursor-source", "keyboard-shortcut");
         toggleHighlighterCursor();
         break;
@@ -207,6 +207,9 @@ function initializeMessageEventListeners() {
         return true; // return asynchronously
       case "get-lost-highlights":
         wrapResponse(getLostHighlights(), sendResponse);
+        return true; // return asynchronously
+      case "GET_LOST_HIGHLIGHTS_FROM_FIREBASE":
+        wrapResponse(getHighlightsNotEqualToHref(request.data), sendResponse);
         return true; // return asynchronously
       case "show-highlight":
         return showHighlight(request.highlightId);

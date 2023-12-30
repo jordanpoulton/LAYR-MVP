@@ -1,13 +1,12 @@
-import { executeInCurrentTab } from '../utils.js';
+import { executeInCurrentTab } from "../utils.js";
 
 function getLostHighlights() {
-    function contentScriptGetLostHighlights() {
-        const lostHighlights = [];
-        window.highlighterAPI.highlights.getAllLost().forEach((highlight, index) => lostHighlights.push({ string: highlight?.string, index }));
-        return lostHighlights;
-    }
+  function contentScriptGetLostHighlights() {
+    const lostHighlights = window.highlighterAPI.highlights.getAllLost() || [];
+    return lostHighlights;
+  }
 
-    return executeInCurrentTab({ func: contentScriptGetLostHighlights });
+  return executeInCurrentTab({ func: contentScriptGetLostHighlights });
 }
 
 export default getLostHighlights;
