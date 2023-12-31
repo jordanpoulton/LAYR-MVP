@@ -37,7 +37,7 @@
 }
 
 .highlighter--icon-like {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/images/thumb-up-outlined.svg');
+    background-image:url('chrome-extension://__MSG_@@extension_id__/images/like.png');
 }
 
 .highlighter--icon-delete {
@@ -45,5 +45,5 @@
 }
 
 .highlighter--icon-dislike {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/images/thumb-down-outlined.svg');
+    background-image:url('chrome-extension://__MSG_@@extension_id__/images/dislike.png');
 }
