@@ -48,21 +48,13 @@ async function store(
     dislikedBy: [""],
   };
 
-  debugger;
-
   if (defaultActionTitle === "like") {
     newHighlight.likes = 1;
-    newHighlight.likedBy = [user.username];
-    newHighlight.dislikes = 0;
-    newHighlight.dislikedBy = [];
+    newHighlight.likedBy.push(user.username);
   } else if (defaultActionTitle === "dislike") {
-    newHighlight.likes = 0;
-    newHighlight.likedBy = [];
     newHighlight.dislikes = 1;
-    newHighlight.dislikedBy = [user.username];
+    newHighlight.dislikedBy.push(user.username);
   }
-
-  debugger;
 
   chrome.runtime.sendMessage({
     action: "store-highlight-in-firebase",
@@ -86,7 +78,7 @@ async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
   }
 
   if (highlightObject) {
-    const alreadyLiked = highlightObject?.likedBy.includes(user.username);
+    const alreadyLiked = highlightObject?.likedBy?.includes(user.username);
     const alreadyDisliked = highlightObject?.dislikedBy?.includes(
       user.username
     );
