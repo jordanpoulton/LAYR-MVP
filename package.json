@@ -30,7 +30,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --config webpack/webpack.dev.js --watch",
     "build": "webpack --config webpack/webpack.prod.js",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist dist.zip"
   },
   "dependencies": {
     "firebase": "^10.7.1"
