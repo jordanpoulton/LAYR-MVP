@@ -1,6 +1,3 @@
-import { trackEvent } from "../analytics.js";
-import { executeInCurrentTab } from "../utils.js";
-
 const openTab = async (url) => {
   const tab = await chrome.tabs.create({ url });
   return tab;

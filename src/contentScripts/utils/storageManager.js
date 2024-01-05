@@ -14,7 +14,16 @@ const GREEN_COLOR = "#44ff93";
 
 let alternativeUrlIndexOffset = 0; // Number of elements stored in the alternativeUrl Key. Used to map highlight indices to correct key
 
-async function store(selection, container, url, href, color, textColor, user) {
+async function store(
+  selection,
+  container,
+  url,
+  href,
+  color,
+  textColor,
+  user,
+  defaultActionTitle
+) {
   const { highlights } = await chrome.storage.local.get({ highlights: {} });
 
   if (!highlights[url]) highlights[url] = [];
@@ -32,12 +41,29 @@ async function store(selection, container, url, href, color, textColor, user) {
     href,
     uuid: crypto.randomUUID(),
     createdAt: Date.now(),
-    likes: 1,
-    likedBy: [user.username, ""],
+    userId: user.username,
+    likes: 0,
+    likedBy: [""],
     dislikes: 0,
     dislikedBy: [""],
-    userId: user.username,
   };
+
+  debugger;
+
+  if (defaultActionTitle === "like") {
+    newHighlight.likes = 1;
+    newHighlight.likedBy = [user.username];
+    newHighlight.dislikes = 0;
+    newHighlight.dislikedBy = [];
+  } else if (defaultActionTitle === "dislike") {
+    newHighlight.likes = 0;
+    newHighlight.likedBy = [];
+    newHighlight.dislikes = 1;
+    newHighlight.dislikedBy = [user.username];
+  }
+
+  debugger;
+
   chrome.runtime.sendMessage({
     action: "store-highlight-in-firebase",
     payload: newHighlight,
@@ -104,11 +130,6 @@ async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
     }
 
     highlightObject.updatedAt = Date.now();
-    highlights[url].splice(
-      highlightIndex - alternativeUrlIndexOffset,
-      1,
-      highlightObject
-    );
     await chrome.storage.local.set({ highlights });
     chrome.runtime.sendMessage({
       action: "store-highlight-in-firebase",

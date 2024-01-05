@@ -198,6 +198,19 @@ function truncateText(text, wordLimit) {
   });
 })();
 
+(async function initializeDefaultActionSection() {
+  const defaultAction = await getFromBackgroundPage({
+    action: "get-default-action",
+  });
+
+  if (!defaultAction.title || !defaultAction.actionImage) {
+    return;
+  }
+
+  defaultActionElement.data = chrome.runtime.getURL(defaultAction.actionImage);
+  defaultActionElement.name = defaultAction.title;
+})();
+
 (async function initializeLostHighlights() {
   updateHighlightsListState();
   const lostHighlights = await getFromBackgroundPage({

@@ -1,8 +1,9 @@
 import highlight from "./highlight/index.js";
 
 import { store, getCurrentUser } from "../utils/storageManager.js";
+import { getFromBackgroundPage } from "../utils/getFromBackgroundPage.js";
 
-async function create(color, selection = window.getSelection()) {
+async function create(selection = window.getSelection()) {
   const selectionString = selection.toString();
   if (!selectionString) return;
 
@@ -14,7 +15,35 @@ async function create(color, selection = window.getSelection()) {
     container = container.parentNode;
   }
 
-  const user = await getCurrentUser();
+  const [defaultAction, user] = await Promise.all([
+    getFromBackgroundPage({
+      action: "get-default-action",
+    }),
+    getCurrentUser(),
+  ]);
+
+  const RED_COLOR = "#FF7F7F";
+  const GREEN_COLOR = "#44ff93";
+
+  let color = {
+    color: GREEN_COLOR,
+    textColor: "black",
+  };
+
+  debugger;
+
+  if (defaultAction.title === "like") {
+    color = {
+      color: GREEN_COLOR,
+      textColor: "black",
+    };
+  } else if (defaultAction.title === "dislike") {
+    color = {
+      color: RED_COLOR,
+      textColor: "black",
+    };
+  }
+
   if (!user) {
     alert("You must be logged in to highlight text");
     return;
@@ -28,6 +57,7 @@ async function create(color, selection = window.getSelection()) {
     color.color,
     color.textColor,
     user,
+    defaultAction.title
   );
   highlight(
     selectionString,
