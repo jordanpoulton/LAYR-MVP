@@ -1,8 +1,9 @@
+import changeAction from "../actions/changeAction.js";
+import getActionOptions from "../actions/getActionOptions.js";
+import getDefaultAction from "../actions/getDefaultAction.js";
 import {
   changeColor,
   editColor,
-  getColorOptions,
-  getCurrentColor,
   getHighlights,
   getLostHighlights,
   highlightText,
@@ -45,6 +46,9 @@ function initializeMessageEventListeners() {
         trackEvent("color-change-source", request.source);
         changeColor(request.color);
         return sendResponse();
+      case "change-action":
+        changeAction(request.actionTitle);
+        return sendResponse();
       case "edit-color":
         editColor(request.colorTitle, request.color, request.textColor);
         return sendResponse();
@@ -65,11 +69,11 @@ function initializeMessageEventListeners() {
         return showHighlight(request.highlightId);
       case "open-tab-and-show-highlight":
         return openTabAndShowHighlight(request.data);
-      case "get-current-color":
-        wrapResponse(getCurrentColor(), sendResponse);
+      case "get-default-action":
+        wrapResponse(getDefaultAction(), sendResponse);
         return true; // return asynchronously
-      case "get-color-options":
-        wrapResponse(getColorOptions(), sendResponse);
+      case "get-action-options":
+        wrapResponse(getActionOptions(), sendResponse);
         return true; // return asynchronously
       case "login-user":
         wrapResponse(loginUser(request.payload), sendResponse);

@@ -87,7 +87,7 @@ body {
   height: 140px;
 }
 
-#colors-section {
+#actions-section {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -96,25 +96,23 @@ body {
   margin: 10px 23px 0 23px;
 }
 
-#colors-list {
+#actions-list {
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
   justify-content: center;
 }
 
-.color {
+.action {
   box-sizing: border-box;
   height: 24px;
   width: 24px;
   margin: 4px;
 
   cursor: pointer;
-  border: 2px solid #5a5a5a;
-  border-radius: 4px;
 }
 
-#selected-color {
+#default-action {
   position: relative;
   width: 80px;
   height: 80px;
@@ -136,7 +134,7 @@ body {
   background-color: rgba(196, 196, 196, 0.23);
 }
 
-#selected-color:hover #change-color-button,
+#selected-action:hover #change-color-button,
 #change-color-button:hover {
   background-color: rgba(196, 196, 196, 0.53);
 }

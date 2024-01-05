@@ -8,7 +8,6 @@ const getAllLost = async () => {
       href,
     },
   });
-  console.log("getAllLost lostHighlights:", lostHighlights);
   return lostHighlights || [];
 };
 

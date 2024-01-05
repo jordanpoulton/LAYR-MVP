@@ -1,21 +1,18 @@
-import { open as openChangeColorModal } from "./change-color-modal.js";
 import { open as openLoginModal } from "./login-modal.js";
 import { getFromBackgroundPage } from "./utils.js";
 
 const highlightButton = document.getElementById("toggle-button");
 const closeButton = document.getElementById("close-button");
-const changeColorButton = document.getElementById("change-color-button");
+// const changeColorButton = document.getElementById("change-action-button");
 const loginLogoutBtn = document.getElementById("login-logout-btn");
 const username = document.getElementById("username");
 
-const colorsListElement = document.getElementById("colors-list");
-const selectedColorElement = document.getElementById("selected-color");
+const actionsListElement = document.getElementById("actions-list");
+const defaultActionElement = document.getElementById("default-action");
 const shortcutLinkElement = document.getElementById("shortcut-link");
 const shortcutLinkTextElement = document.getElementById("shortcut-link-text");
 const highlightsListElement = document.getElementById("highlights-list");
-const highlightsEmptyStateElement = document.getElementById(
-  "highlights-list-empty-state"
-);
+
 const highlightsErrorStateElement = document.getElementById(
   "highlights-list-error-state"
 );
@@ -32,27 +29,23 @@ const noHighlightsOnOtherPagesTitleElement = document.getElementById(
   "no-highlights-on-other-pages-title"
 );
 
-function colorChanged(colorOption) {
-  const { backgroundColor, borderColor } = colorOption.style;
-  const { colorTitle } = colorOption.dataset;
+async function actionChanged(action) {
+  const actionOptions = await getFromBackgroundPage({
+    action: "get-action-options",
+  });
 
-  // Swap (in the UI) the previous selected color and the newly selected one
-  const {
-    backgroundColor: previousBackgroundColor,
-    borderColor: previousBorderColor,
-  } = selectedColorElement.style;
-  const { colorTitle: previousColorTitle } = selectedColorElement.dataset;
-  colorOption.style.backgroundColor = previousBackgroundColor;
-  colorOption.style.borderColor = previousBorderColor;
-  colorOption.dataset.colorTitle = previousColorTitle;
-  selectedColorElement.style.backgroundColor = backgroundColor;
-  selectedColorElement.style.borderColor = borderColor;
-  selectedColorElement.dataset.colorTitle = colorTitle;
+  const actionTitle = action.name;
+  let actionImage = actionOptions.find(
+    (actionOption) => actionOption.title === actionTitle
+  ).actionImage;
 
-  // Change the global highlighter color
+  defaultActionElement.data = chrome.runtime.getURL(actionImage);
+  defaultActionElement.name = actionTitle;
+
+  // Change the global highlighter action
   chrome.runtime.sendMessage({
-    action: "change-color",
-    color: colorTitle,
+    action: "change-action",
+    actionTitle,
     source: "popup",
   });
 }
@@ -74,14 +67,18 @@ function orderHighlights() {
   });
 }
 
-function showHighlightsTitles() {
-  // First, clear any existing titles
+function hideTitles() {
   [
     highlightsOnThisPageTitleElement,
     highlightsListLostTitleElement,
     noHighlightsOnThisPageTitleElement,
     noHighlightsOnOtherPagesTitleElement,
   ].forEach((elem) => elem && elem.remove());
+}
+
+function showHighlightsTitles() {
+  // First, clear any existing titles
+  hideTitles();
 
   const highlights = highlightsListElement.querySelectorAll(".current");
   const lostHighlightElements = highlightsListElement.querySelectorAll(".lost");
@@ -127,8 +124,8 @@ function hideErrorState() {
 hideErrorState(); // Hide by default
 
 function showErrorState() {
+  hideTitles();
   highlightsErrorStateElement.style.display = "flex";
-  highlightsEmptyStateElement.style.display = "none"; // Also hide the empty state
 }
 
 function truncateText(text, wordLimit) {
@@ -170,31 +167,20 @@ function truncateText(text, wordLimit) {
   updateHighlightsListState();
 })();
 
-(async function initializeColorsList() {
-  const color = await getFromBackgroundPage({ action: "get-current-color" });
-  const colorOptions = await getFromBackgroundPage({
-    action: "get-color-options",
+(async function initializeActionsList() {
+  const actionOptions = await getFromBackgroundPage({
+    action: "get-action-options",
   });
 
-  colorOptions.forEach((colorOption) => {
-    const colorTitle = colorOption.title;
-    const selected = colorTitle === color.title;
-    const colorOptionElement = selected
-      ? selectedColorElement
-      : document.createElement("div");
-
-    colorOptionElement.classList.add("color");
-    colorOptionElement.dataset.colorTitle = colorTitle;
-    colorOptionElement.style.backgroundColor = colorOption.color;
-    if (colorOption.textColor)
-      colorOptionElement.style.borderColor = colorOption.textColor;
-
-    if (!selected) {
-      colorOptionElement.addEventListener("click", (e) =>
-        colorChanged(e.target)
-      );
-      colorsListElement.appendChild(colorOptionElement);
-    }
+  actionOptions.forEach((action) => {
+    const actionTitle = action.title;
+    const actionElement = document.createElement("object");
+    actionElement.type = "image/png";
+    actionElement.classList.add("action");
+    actionElement.name = actionTitle;
+    actionElement.data = chrome.runtime.getURL(action.actionImage);
+    actionElement.addEventListener("click", (e) => actionChanged(e.target));
+    actionsListElement.appendChild(actionElement);
   });
 })();
 
@@ -265,7 +251,7 @@ function truncateText(text, wordLimit) {
     loginLogoutBtn.innerText = "Logout";
     loginLogoutBtn.addEventListener("click", () => {
       chrome.storage.sync.set({ user: null });
-      location.reload(); // Force a refresh of the colors list in the popup
+      location.reload(); // Force a refresh of the actions list in the popup
     });
   } else {
     username.style.display = "none";
@@ -277,8 +263,6 @@ function truncateText(text, wordLimit) {
 
 // Register Events
 highlightButton.addEventListener("click", toggleHighlighterCursor);
-changeColorButton.addEventListener("click", openChangeColorModal);
-selectedColorElement.addEventListener("click", openChangeColorModal);
 
 shortcutLinkElement.addEventListener("click", () => {
   // Open the shortcuts Chrome settings page in a new tab
