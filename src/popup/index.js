@@ -161,6 +161,20 @@ function truncateText(text, wordLimit) {
     newEl.addEventListener("click", () => {
       chrome.runtime.sendMessage({ action: "show-highlight", highlightId });
     });
+    const newDeleteIconEl = document.createElement("span");
+    newDeleteIconEl.classList.add("material-icons", "delete-icon");
+    newDeleteIconEl.innerText = "delete";
+    newDeleteIconEl.onclick = () => {
+      chrome.runtime.sendMessage(
+        { action: "remove-highlight", highlightId },
+        () => {
+          // newEl.remove();
+          // updateHighlightsListState();
+          alert("Highlight removed");
+        }
+      );
+    };
+    newEl.appendChild(newDeleteIconEl);
     highlightsListElement.appendChild(newEl);
   });
 
