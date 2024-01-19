@@ -151,21 +151,61 @@
       </form>
     </div> -->
     <div id="login-modal" class="modal">
+      <h2 class="modal-title">Login To LAYR</h2>
+      <p>
+        Welcome back! <br />
+        Please login to continue using LAYR.
+      </p>
+      <form id="login-form">
+        <div>
+          <fieldset>
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="login-email" required />
+            <p class="form-error" id="login-email-status"></p>
+          </fieldset>
+          <fieldset>
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="login-username" required />
+            <p class="form-error" id="login-username-status"></p>
+          </fieldset>
+        </div>
+
+        <div class="modal-actions">
+          <div class="modal-button modal-action-cancel" id="login-cancel">
+            Cancel
+          </div>
+          <input
+            id="login-submit"
+            type="submit"
+            class="modal-button modal-action-confirm"
+            value="Confirm"
+          />
+        </div>
+      </form>
+      <p class="form-error" id="login-error"></p>
+      <p>
+        If you don't have an account,
+        <strong id="signup-btn">signup here</strong>
+      </p>
+    </div>
+    <div id="signup-modal" class="modal">
       <h2 class="modal-title">Join the Conversation</h2>
       <p>
         You need an account so we can assign all your interactions to you
         personally, and to prevent spam. Please note, whatever username you
         choose will be the name associated to all of your interactions on LAYR
       </p>
-      <form id="login-form">
+      <form id="signup-form">
         <div>
           <fieldset>
             <label for="email">Email:</label>
-            <input type="email" name="email" required />
+            <input type="email" name="email" id="signup-email" required />
+            <p class="form-error" id="signup-email-status"></p>
           </fieldset>
           <fieldset>
             <label for="username">Username:</label>
-            <input type="text" name="username" required />
+            <input type="text" name="username" id="signup-username" required />
+            <p class="form-error" id="signup-username-status"></p>
           </fieldset>
           <p>
             Note:<br />Use unique email and username<br />Also remember it for
@@ -174,13 +214,14 @@
         </div>
 
         <div class="modal-actions">
-          <div class="modal-button modal-action-cancel" id="login-cancel">
+          <div class="modal-button modal-action-cancel" id="signup-cancel">
             Cancel
           </div>
           <input
+            id="signup-submit"
             type="submit"
             class="modal-button modal-action-confirm"
-            value="Confirm"
+            value="Sign Up"
           />
         </div>
       </form>

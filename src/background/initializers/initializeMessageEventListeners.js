@@ -19,7 +19,7 @@ import {
   getHighlightsNotEqualToHref,
   storeHighlightInFirebase,
 } from "../firebase-db/highlights-actions.db.js";
-import { loginUser } from "../firebase-db/user-actions.db.js";
+import { findUserByEmail, findUserByUsername, loginUser, registerUser } from "../firebase-db/user-actions.db.js";
 import { wrapResponse } from "../utils.js";
 
 function initializeMessageEventListeners() {
@@ -83,6 +83,15 @@ function initializeMessageEventListeners() {
         return true; // return asynchronously
       case "get-highlight-by-id":
         wrapResponse(getHighlightById(request.uuid), sendResponse);
+        return true; // return asynchronously
+      case "find-user-by-username":
+        wrapResponse(findUserByUsername(request.username), sendResponse);
+        return true; // return asynchronously
+      case "find-user-by-email":
+        wrapResponse(findUserByEmail(request.email), sendResponse);
+        return true; // return asynchronously
+      case "signup-user":
+        wrapResponse(registerUser(request.payload), sendResponse);
         return true; // return asynchronously
     }
   });

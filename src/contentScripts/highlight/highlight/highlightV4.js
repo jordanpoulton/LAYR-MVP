@@ -2,7 +2,7 @@ import { DELETED_CLASS, HIGHLIGHT_CLASS } from './constants.js';
 
 import { initializeHighlightEventListeners } from '../../hoverTools/index.js';
 
-function highlight(selString, container, selection, color, textColor, highlightIndex) {
+function highlight(user, selString, container, selection, color, textColor, highlightIndex) {
     const highlightInfo = {
         color: color ? color : "yellow",
         textColor: textColor ? textColor : "inherit",
@@ -12,6 +12,7 @@ function highlight(selString, container, selection, color, textColor, highlightI
         anchorOffset: selection.anchorOffset,
         focus: $(selection.focusNode),
         focusOffset: selection.focusOffset,
+        user,
     };
 
     /**
@@ -48,7 +49,7 @@ function recursiveWrapper(container, highlightInfo) {
 }
 
 function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighted) {
-    const { anchor, focus, anchorOffset, focusOffset, color, textColor, highlightIndex, selectionString } = highlightInfo;
+    const { anchor, focus, anchorOffset, focusOffset, color, textColor, highlightIndex, selectionString, user } = highlightInfo;
     const selectionLength = selectionString.length;
 
     container.contents().each((_index, element) => {
@@ -132,6 +133,7 @@ function _recursiveWrapper(container, highlightInfo, startFound, charsHighlighte
         highlightNode.style.backgroundColor = color;
         highlightNode.style.color = textColor;
         highlightNode.dataset.highlightId = highlightIndex;
+        highlightNode.dataset.highlightUser = highlightIndex;
         highlightNode.textContent = highlightTextEl.nodeValue;
         highlightTextEl.remove();
         parent.insertBefore(highlightNode, insertBeforeElement);

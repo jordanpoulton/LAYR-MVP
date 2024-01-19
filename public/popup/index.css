@@ -327,3 +327,12 @@ body {
   font-style: italic;
   color: #ff7777;
 }
+
+#signup-btn{
+  color: #fdd33c;
+  cursor: pointer;
+}
+
+.form-error{
+  color: red;
+}

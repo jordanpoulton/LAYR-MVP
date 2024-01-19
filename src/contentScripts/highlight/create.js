@@ -30,8 +30,6 @@ async function create(selection = window.getSelection()) {
     textColor: "black",
   };
 
-  debugger;
-
   if (defaultAction.title === "like") {
     color = {
       color: GREEN_COLOR,
@@ -60,6 +58,7 @@ async function create(selection = window.getSelection()) {
     defaultAction.title
   );
   highlight(
+    user,
     selectionString,
     container,
     selection,

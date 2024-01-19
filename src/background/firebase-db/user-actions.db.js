@@ -6,6 +6,30 @@ async function loginUser({ username, email }) {
   if (!username || !email) {
     return Promise.reject(new Error("Invalid username or email"));
   }
+  const userRef = ref(db, "users/" + username);
+  try {
+    const snapshot = await get(userRef);
+    if (snapshot.exists()) {
+      const user = snapshot.val();
+      if (user.email === email) {
+        return user;
+      } else {
+        return Promise.reject(new Error("Username or Email is incorrect"));
+      }
+    } else {
+      return Promise.reject(new Error("Username or Email is incorrect"));
+    }
+  } catch (error) {
+    console.error("Error logging in user: ", error);
+    throw error; // Rethrow or handle as appropriate
+  }
+}
+
+async function registerUser({ username, email }) {
+  // Validate input data
+  if (!username || !email) {
+    return Promise.reject(new Error("Invalid username or email"));
+  }
 
   const userRef = ref(db, "users/" + username);
   try {
@@ -56,4 +80,4 @@ async function findUserByEmail(email) {
   }
 }
 
-export { loginUser, findUserByUsername, findUserByEmail };
+export { loginUser, findUserByUsername, findUserByEmail, registerUser };
