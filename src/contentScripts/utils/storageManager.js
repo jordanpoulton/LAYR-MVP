@@ -46,6 +46,8 @@ async function store(
     likedBy: [""],
     dislikes: 0,
     dislikedBy: [""],
+    comments: [],
+    commentsCount: 0,
   };
 
   if (defaultActionTitle === "like") {
@@ -63,6 +65,36 @@ async function store(
 
   // Return the index of the new highlight:
   return newHighlight.uuid;
+}
+
+async function addCommentToHighlight(uuid, user, commentText) {
+  const highlight = await getHighlightById(uuid);
+
+  if (!highlight) {
+    console.error("Highlight not found to add comment");
+    return;
+  }
+
+  const newComment = {
+    text: commentText,
+    user: user.username,
+    createdAt: Date.now(),
+  };
+
+  if (highlight.comments) {
+    highlight.comments.push(newComment);
+    highlight.commentsCount += 1;
+  } else {
+    highlight.comments = [newComment];
+    highlight.commentsCount = 1;
+  }
+
+  highlight.updatedAt = Date.now();
+  // await chrome.storage.local.set({ highlights });
+  chrome.runtime.sendMessage({
+    action: "store-highlight-in-firebase",
+    payload: highlight,
+  }); // See src/background/firebase-db/highlights-actions.db.js for the implementation of
 }
 
 async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
@@ -371,4 +403,5 @@ export {
   store,
   update,
   updateLikeCount,
+  addCommentToHighlight,
 };

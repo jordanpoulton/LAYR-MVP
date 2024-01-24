@@ -1,5 +1,10 @@
 import { HIGHLIGHT_CLASS } from "../highlight/index.js";
-import { getHighlightById, updateLikeCount } from "../utils/storageManager.js";
+import {
+  addCommentToHighlight,
+  getCurrentUser,
+  getHighlightById,
+  updateLikeCount,
+} from "../utils/storageManager.js";
 
 let hoverToolEl = null;
 let hoverToolTimeout = null;
@@ -97,6 +102,8 @@ async function updateLikeDislikeCounts(highlightId) {
     document.getElementById("like-count").textContent = highlight.likes || 0;
     document.getElementById("dislike-count").textContent =
       highlight.dislikes || 0;
+    document.getElementById("comment-count").textContent =
+      highlight.commentsCount || 0;
   }
 }
 
@@ -150,7 +157,12 @@ function onHoverToolMouseEnter() {
   }
 }
 
-function onLikeBtnClicked() {
+async function onLikeBtnClicked() {
+  const user = await getCurrentUser();
+  if (!user) {
+    alert("You must be logged in to like a highlight.");
+    return;
+  }
   const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
   updateLikeCount(
     highlightId,
@@ -160,7 +172,12 @@ function onLikeBtnClicked() {
   );
 }
 
-function onDislikeBtnClicked() {
+async function onDislikeBtnClicked() {
+  const user = await getCurrentUser();
+  if (!user) {
+    alert("You must be logged in to dislike a highlight.");
+    return;
+  }
   const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
   updateLikeCount(
     highlightId,
@@ -170,13 +187,20 @@ function onDislikeBtnClicked() {
   );
 }
 
-function onCommentBtnClicked() {
+async function onCommentBtnClicked() {
+  const user = await getCurrentUser();
+  if (!user) {
+    alert("You must be logged in to comment a highlight.");
+    return;
+  }
+
   const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
-  let comment = prompt("Comment here:",);
+  let comment = prompt("Comment here:");
   if (comment == null || comment == "") {
     console.log("User cancelled the comment prompt.");
   } else {
     console.log("Comment: " + comment, highlightId);
+    await addCommentToHighlight(highlightId, user, comment);
   }
 }
 
