@@ -203,13 +203,12 @@ async function loadAll(url, alternativeUrl) {
       if (!highlights) return [];
       // Load highlights for the main URL
       highlights.forEach((highlight) => {
-        load(highlight, highlight.uuid);
+        load(highlight, highlight.uuid, highlight?.userId);
       });
     }
   );
 
   let detachAlternativeUrlListener;
-
   if (alternativeUrl) {
     // Setup listeners for the alternative URL
     detachAlternativeUrlListener = await setupFirebaseListeners(
@@ -218,7 +217,7 @@ async function loadAll(url, alternativeUrl) {
         if (!highlights) return [];
         // Load highlights for the alternative URL
         highlights.forEach((highlight) => {
-          load(highlight, highlight.uuid);
+          load(highlight, highlight.uuid, highlight?.userId);
         });
       }
     );
@@ -234,7 +233,7 @@ async function loadAll(url, alternativeUrl) {
 }
 
 // noErrorTracking is optional
-function load(highlightVal, highlightIndex, noErrorTracking) {
+function load(highlightVal, highlightIndex, username, noErrorTracking) {
   const selection = {
     anchorNode: elementFromQuery(highlightVal.anchorNode),
     anchorOffset: highlightVal.anchorOffset,
@@ -251,8 +250,8 @@ function load(highlightVal, highlightIndex, noErrorTracking) {
     }
     return false;
   }
-
   const success = highlight(
+    username,
     selectionString,
     container,
     selection,

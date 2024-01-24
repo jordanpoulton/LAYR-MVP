@@ -47,3 +47,7 @@
 .highlighter--icon-dislike {
     background-image:url('chrome-extension://__MSG_@@extension_id__/images/dislike.png');
 }
+
+.highlighter--icon-comment {
+    background-image:url('chrome-extension://__MSG_@@extension_id__/images/comment.png');
+}

@@ -22,6 +22,12 @@ async function create(selection = window.getSelection()) {
     getCurrentUser(),
   ]);
 
+  if (!user) {
+    // eslint-disable-next-line no-alert
+    alert("You must be logged in to highlight text");
+    return;
+  }
+
   const RED_COLOR = "#FF7F7F";
   const GREEN_COLOR = "#44ff93";
 
@@ -42,11 +48,6 @@ async function create(selection = window.getSelection()) {
     };
   }
 
-  if (!user) {
-    alert("You must be logged in to highlight text");
-    return;
-  }
-
   const highlightIndex = await store(
     selection,
     container,
@@ -58,7 +59,7 @@ async function create(selection = window.getSelection()) {
     defaultAction.title
   );
   highlight(
-    user,
+    user.username,
     selectionString,
     container,
     selection,

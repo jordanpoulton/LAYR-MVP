@@ -19,16 +19,16 @@ function addHighlightError(highlight, highlightIndex) {
 }
 
 function retryHighlightError(highlightError) {
-    const success = load(highlightError.highlight, highlightError.highlightIndex, true);
+    // const success = load(highlightError.highlight, highlightError.highlightIndex, true);
 
-    if (success) {
-        lostHighlights.delete(highlightError.highlightIndex);
-        return;
-    }
+    // if (success) {
+    //     lostHighlights.delete(highlightError.highlightIndex);
+    //     return;
+    // }
 
-    if (Date.now() - highlightError.errorTime < MAX_RETRY_TIME) {
-        highlightError.timeout = setTimeout(retryHighlightError, RETRY_INTERVAL, highlightError);
-    }
+    // if (Date.now() - highlightError.errorTime < MAX_RETRY_TIME) {
+    //     highlightError.timeout = setTimeout(retryHighlightError, RETRY_INTERVAL, highlightError);
+    // }
 }
 
 function getLostHighlights() {
