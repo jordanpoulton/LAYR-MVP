@@ -2,10 +2,10 @@
 /* eslint-disable comma-dangle */
 import { addHighlightError } from "./errorManager.js";
 
-import { highlight } from "../highlight/index.js";
-import { getFromBackgroundPage } from "./getFromBackgroundPage.js";
 import { off, onValue, ref } from "firebase/database";
 import { db } from "../../background/firebase-db/firebase.js";
+import { highlight } from "../highlight/index.js";
+import { getFromBackgroundPage } from "./getFromBackgroundPage.js";
 
 const STORE_FORMAT_VERSION = chrome.runtime.getManifest().version;
 
@@ -184,6 +184,12 @@ async function getHighlightById(uuid) {
   }
 
   return null; // Return null if no match is found
+}
+
+async function storeHighlightIdIntoLocalStorage(highlightId) {
+  await chrome.storage.local.set({
+    selectedHighlightId: highlightId,
+  });
 }
 
 async function update(
@@ -394,6 +400,7 @@ function escapeCSSString(cssString) {
 }
 
 export {
+  addCommentToHighlight,
   clearPage,
   getCurrentUser,
   getHighlightById,
@@ -403,5 +410,5 @@ export {
   store,
   update,
   updateLikeCount,
-  addCommentToHighlight,
+  storeHighlightIdIntoLocalStorage,
 };

@@ -9,6 +9,7 @@ module.exports = {
     popup: path.join(srcDir, "popup", "index.js"),
     background: path.join(srcDir, "background", "index.js"),
     content_script: path.join(srcDir, "contentScripts", "index.js"),
+    sidepanel: path.join(srcDir, "sidepanel", "index.js"),
   },
   output: {
     path: path.join(__dirname, "../dist/js"),

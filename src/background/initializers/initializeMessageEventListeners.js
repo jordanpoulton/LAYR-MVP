@@ -19,12 +19,27 @@ import {
   getHighlightsNotEqualToHref,
   storeHighlightInFirebase,
 } from "../firebase-db/highlights-actions.db.js";
-import { findUserByEmail, findUserByUsername, loginUser, registerUser } from "../firebase-db/user-actions.db.js";
+import {
+  findUserByEmail,
+  findUserByUsername,
+  loginUser,
+  registerUser,
+} from "../firebase-db/user-actions.db.js";
 import { wrapResponse } from "../utils.js";
 
 function initializeMessageEventListeners() {
   // Listen to messages from content scripts
   /* eslint-disable consistent-return */
+
+  async function openSidepanel(sender) {
+    await chrome.sidePanel.open({ tabId: sender.tab.id });
+    await chrome.sidePanel.setOptions({
+      tabId: sender.tab.id,
+      path: "../sidepanel/index.html",
+      enabled: true,
+    });
+  }
+
   chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     if (!request.action) return;
 
@@ -93,6 +108,9 @@ function initializeMessageEventListeners() {
       case "signup-user":
         wrapResponse(registerUser(request.payload), sendResponse);
         return true; // return asynchronously
+      case "open_side_panel":
+        openSidepanel(_sender);
+      // This will open a tab-specific side panel only on the current tab.
     }
   });
   /* eslint-enable consistent-return */

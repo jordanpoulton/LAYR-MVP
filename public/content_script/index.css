@@ -13,7 +13,7 @@
     border-radius: 5px;
     padding: 1px 0;
     background-color: #f0f0f0;
-    width: 108px; /* When changing this, also update moveToolbarToHighlight() in hoverTools.js */
+    /* width: 108px; When changing this, also update moveToolbarToHighlight() in hoverTools.js */
     height: 37px;
     display: flex;
     justify-content: space-evenly;
@@ -29,7 +29,17 @@
     background-repeat: no-repeat;
     background-position: center;
     cursor: pointer;
-    margin: 0 4px;
+    margin: 0 5px;
+}
+
+.highlighter--btn {
+    display: inline-block;
+    height: 25px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    margin: 0 5px;
 }
 
 .highlighter--icon:hover {

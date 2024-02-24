@@ -16,6 +16,9 @@
     },
     "default_popup": "popup/index.html"
   },
+  "side_panel": {
+    "default_path": "sidepanel/index.html"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
@@ -40,7 +43,7 @@
       "description": "Toggle the highlighter cursor"
     }
   },
-  "permissions": ["contextMenus", "scripting", "storage"],
+  "permissions": ["contextMenus", "scripting", "storage", "sidePanel"],
   "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {

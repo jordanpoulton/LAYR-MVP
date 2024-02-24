@@ -1,0 +1,93 @@
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+  padding: 10px;
+  background-color: #f0f0f0;
+}
+
+#highlight_interactions {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: row;
+}
+
+.user_header {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: flex-start;
+}
+
+#created_by {
+  font-size: small;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+#highlight_text {
+  padding-inline: 5px;
+}
+
+.name_and_date {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.highlight_interaction {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.highlighter--icon {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.highlighter--icon:hover {
+  filter: opacity(0.92);
+}
+
+.highlighter--icon-like {
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/like.png");
+}
+
+.highlighter--icon-dislike {
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/dislike.png");
+}
+
+.highlighter--icon-comment {
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/comment.png");
+}
+
+.highlight_comment {
+  margin-bottom: 10px;
+  padding: 5px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.comment_user {
+  font-weight: bold;
+}
+
+.comment_text {
+  margin-top: 5px;
+}
+
+.comment_date {
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: #666;
+}

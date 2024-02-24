@@ -3,6 +3,7 @@ import {
   addCommentToHighlight,
   getCurrentUser,
   getHighlightById,
+  storeHighlightIdIntoLocalStorage,
   updateLikeCount,
 } from "../utils/storageManager.js";
 
@@ -13,6 +14,13 @@ let highlightClicked = false;
 let likeBtn = null;
 let dislikeBtn = null;
 let commentBtnEl = null;
+
+function resetCounts() {
+  document.getElementById("like-count").textContent = "0";
+  document.getElementById("dislike-count").textContent = "0";
+  document.getElementById("comment-count").textContent = "0";
+  document.getElementById("details-btn").textContent = "";
+}
 
 function initializeHoverTools() {
   $.get(chrome.runtime.getURL("../content_script/index.html"), (data) => {
@@ -62,6 +70,7 @@ function getHoverToolEl() {
     // The first time we want to show this element, append it to the DOM.
     // It's also possible the webpage deleted this node from the DOM. In that case, simply re-attach it
     hoverToolEl.appendTo("body");
+    resetCounts();
   }
 
   return hoverToolEl;
@@ -98,6 +107,17 @@ function onHighlightMouseEnterOrClick(e) {
 
 async function updateLikeDislikeCounts(highlightId) {
   const highlight = await getHighlightById(highlightId);
+  const detailsBtn = document.getElementById("details-btn");
+  detailsBtn.textContent = "See Details";
+  detailsBtn.onclick = async () => {
+    await storeHighlightIdIntoLocalStorage(highlightId);
+    chrome.runtime.sendMessage({ action: "open_side_panel" });
+    chrome.runtime.sendMessage({
+      action: "update_highlight_details",
+      highlightId,
+    }); // Send new highlight ID to sidepanel
+  };
+
   if (highlight) {
     document.getElementById("like-count").textContent = highlight.likes || 0;
     document.getElementById("dislike-count").textContent =
@@ -205,8 +225,8 @@ async function onCommentBtnClicked() {
 }
 
 export {
-  initializeHoverTools,
   initializeHighlightEventListeners,
+  initializeHoverTools,
   onHighlightMouseEnterOrClick,
   removeHighlightEventListeners,
 };
