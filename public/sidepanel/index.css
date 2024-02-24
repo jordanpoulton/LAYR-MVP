@@ -1,46 +1,82 @@
 body {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+  font-family: "Roboto", sans-serif;
   margin: 0;
   padding: 10px;
   background-color: #f0f0f0;
-}
-
-#highlight_interactions {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  flex-direction: row;
-}
-
-.user_header {
-  display: flex;
-  flex-direction: row;
-  gap: 5px;
-  align-items: flex-start;
-}
-
-#created_by {
-  font-size: small;
-  font-weight: bold;
-  margin-top: 3px;
-}
-
-#highlight_text {
-  padding-inline: 5px;
-}
-
-.name_and_date {
   display: flex;
   flex-direction: column;
-  gap: 3px;
 }
 
-.highlight_interaction {
+.highlight-details {
+  background: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.highlight-header {
   display: flex;
   align-items: center;
-  gap: 3px;
+  margin-bottom: 20px;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.highlight-metadata > span {
+  display: block;
+}
+
+.highlight-text {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.highlight-interactions {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.interaction {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.interaction .material-icons {
+  font-size: 24px;
+  margin-right: 5px;
+}
+
+.highlight-comments h3 {
+  margin-top: 0;
+}
+
+.highlight_comment {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.comment_user {
+  font-weight: 500;
+}
+
+.comment_date {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.comment_text {
+  margin-top: 5px;
+  margin-bottom: 2px;
 }
 
 .highlighter--icon {
@@ -53,11 +89,6 @@ body {
   cursor: pointer;
   margin: 0 5px;
 }
-
-.highlighter--icon:hover {
-  filter: opacity(0.92);
-}
-
 .highlighter--icon-like {
   background-image: url("chrome-extension://__MSG_@@extension_id__/images/like.png");
 }
@@ -68,26 +99,4 @@ body {
 
 .highlighter--icon-comment {
   background-image: url("chrome-extension://__MSG_@@extension_id__/images/comment.png");
-}
-
-.highlight_comment {
-  margin-bottom: 10px;
-  padding: 5px;
-  background-color: #ffffff;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.comment_user {
-  font-weight: bold;
-}
-
-.comment_text {
-  margin-top: 5px;
-}
-
-.comment_date {
-  margin-top: 5px;
-  font-size: 0.8rem;
-  color: #666;
 }

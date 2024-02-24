@@ -4,12 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>LAYR</title>
-    <meta charset="utf-8" />
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Catamaran:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Catamaran:wght@400;700&family=Roboto:wght@400;500;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -20,45 +18,43 @@
     <script type="module" src="../js/sidepanel.js" defer></script>
   </head>
   <body>
-    <div id="highlight_details">
-      <div class="user_section">
-        <div class="user_header">
-          <img width="40px" height="40px" src="../../images/user-avatar.png" />
-          <div class="name_and_date">
-            <div id="created_by"></div>
-            <div id="created_at"></div>
-          </div>
+    <div id="highlight_details" class="highlight-details">
+      <div class="highlight-header">
+        <img
+          src="../../images/user-avatar.png"
+          alt="User Avatar"
+          class="user-avatar"
+        />
+        <div class="highlight-metadata">
+          <span id="created_by"></span>
+          <span id="created_at"></span>
         </div>
       </div>
-      <p id="highlight_text"></p>
-      <div id="highlight_interactions">
-        <div class="highlight_interaction">
+      <div id="highlight_text" class="highlight-text"></div>
+      <div id="highlight_interactions" class="highlight-interactions">
+        <div class="interaction" title="Like">
           <div
             class="highlighter--icon highlighter--icon-like"
             title="like"
           ></div>
           <span id="like-count">0</span>
         </div>
-
-        <!-- New element for like count -->
-        <div class="highlight_interaction">
+        <div class="interaction" title="Dislike">
           <div
             class="highlighter--icon highlighter--icon-dislike"
             title="dislike"
           ></div>
           <span id="dislike-count">0</span>
         </div>
-        <!-- New element for dislike count -->
-        <div class="highlight_interaction">
+        <div class="interaction" title="Comments">
           <div
             class="highlighter--icon highlighter--icon-comment"
             title="comment"
           ></div>
           <span id="comment-count">0</span>
         </div>
-        <!-- New element for comments count -->
       </div>
-      <div id="highlight_comments">
+      <div id="highlight_comments" class="highlight-comments">
         <h3>Comments</h3>
         <div id="comments"></div>
       </div>
