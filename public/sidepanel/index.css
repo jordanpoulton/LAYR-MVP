@@ -100,3 +100,9 @@ body {
 .highlighter--icon-comment {
   background-image: url("chrome-extension://__MSG_@@extension_id__/images/comment.png");
 }
+
+.no_comments {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}

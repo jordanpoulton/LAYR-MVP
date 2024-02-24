@@ -29,18 +29,22 @@ async function updateHighlightDetails(highlightId) {
     // New code to populate comments
     const commentsDiv = document.getElementById("comments");
     commentsDiv.innerHTML = ""; // Clear existing comments
-    highlight.comments.forEach((comment) => {
-      const commentEl = document.createElement("div");
-      commentEl.className = "highlight_comment";
-      commentEl.innerHTML = `
+    if (highlight.comments) {
+      highlight.comments.forEach((comment) => {
+        const commentEl = document.createElement("div");
+        commentEl.className = "highlight_comment";
+        commentEl.innerHTML = `
         <div class="comment_user">${comment.user}</div>
         <div class="comment_text">${comment.text}</div>
         <div class="comment_date">${new Date(
           comment.createdAt
         ).toLocaleString()}</div>
       `;
-      commentsDiv.appendChild(commentEl);
-    });
+        commentsDiv.appendChild(commentEl);
+      });
+    } else {
+      commentsDiv.innerHTML = `<div class="no_comments">No comments yet</div>`;
+    }
   } else {
     alert("No Highlight found");
   }
