@@ -1,11 +1,12 @@
 import { HIGHLIGHT_CLASS } from "../highlight/index.js";
 import {
-  addCommentToHighlight,
-  getCurrentUser,
-  getHighlightById,
-  storeHighlightIdIntoLocalStorage,
-  updateLikeCount,
-} from "../utils/storageManager.js";
+  onDislikeBtnClicked,
+  onLikeBtnClicked,
+  updateLikeDislikeCounts,
+} from "./hover-utils.js";
+import { addCommentToHighlight, getCurrentUser } from "../utils/storageManager";
+
+import { closeModal, createModal, hideLoadingIndicator, openModal, showFeedback, showLoadingIndicator } from "./modal.js";
 
 let hoverToolEl = null;
 let hoverToolTimeout = null;
@@ -32,9 +33,17 @@ function initializeHoverTools() {
     likeBtn = hoverToolEl.find(".highlighter--icon-like")[0];
     commentBtnEl = hoverToolEl.find(".highlighter--icon-comment")[0];
     dislikeBtn = hoverToolEl.find(".highlighter--icon-dislike")[0];
-    likeBtn.addEventListener("click", onLikeBtnClicked);
-    commentBtnEl.addEventListener("click", onCommentBtnClicked);
-    dislikeBtn.addEventListener("click", onDislikeBtnClicked);
+    likeBtn.addEventListener("click", () =>
+      onLikeBtnClicked(currentHighlightEl)
+    );
+    commentBtnEl.addEventListener("click", () =>
+      onCommentBtnClicked(currentHighlightEl)
+    );
+    dislikeBtn.addEventListener("click", () =>
+      onDislikeBtnClicked(currentHighlightEl)
+    );
+    createModal();
+    initializeModalEvents(currentHighlightEl);
   });
 
   // Allow clicking outside of a highlight to unselect
@@ -105,28 +114,6 @@ function onHighlightMouseEnterOrClick(e) {
   );
 }
 
-async function updateLikeDislikeCounts(highlightId) {
-  const highlight = await getHighlightById(highlightId);
-  const detailsBtn = document.getElementById("details-btn");
-  detailsBtn.textContent = "See Details";
-  detailsBtn.onclick = async () => {
-    await storeHighlightIdIntoLocalStorage(highlightId);
-    chrome.runtime.sendMessage({ action: "open_side_panel" });
-    chrome.runtime.sendMessage({
-      action: "update_highlight_details",
-      highlightId,
-    }); // Send new highlight ID to sidepanel
-  };
-
-  if (highlight) {
-    document.getElementById("like-count").textContent = highlight.likes || 0;
-    document.getElementById("dislike-count").textContent =
-      highlight.dislikes || 0;
-    document.getElementById("comment-count").textContent =
-      highlight.commentsCount || 0;
-  }
-}
-
 function onHighlightMouseLeave() {
   if (!highlightClicked) {
     hoverToolTimeout = setTimeout(hide, 170);
@@ -177,50 +164,70 @@ function onHoverToolMouseEnter() {
   }
 }
 
-async function onLikeBtnClicked() {
-  const user = await getCurrentUser();
-  if (!user) {
-    alert("You must be logged in to like a highlight.");
-    return;
+// Modify the submitComment export function
+export async function submitComment(highlightId) {
+  const submitButton = document.getElementById("submitComment");
+  try {
+    submitButton.disabled = true; // Disable the submit button
+    showLoadingIndicator();
+
+    const commentInput = document.getElementById("commentInput");
+    const commentText = commentInput.value.trim();
+
+    if (!commentText) {
+      throw new Error("Comment text is empty.");
+    }
+
+    const user = await getCurrentUser();
+    if (!user) {
+      showFeedback("You must be logged in to comment.", false);
+      return;
+    }
+
+    await addCommentToHighlight(highlightId, user, commentText);
+    commentInput.value = ""; // Clear the input field
+    showFeedback("Comment added successfully.");
+    setTimeout(closeModal, 2000); // Close the modal after 2 seconds
+  } catch (error) {
+    showFeedback(error.message, false);
+  } finally {
+    hideLoadingIndicator();
+    submitButton.disabled = false; // Re-enable the submit button
   }
-  const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
-  updateLikeCount(
-    highlightId,
-    window.location.hostname + window.location.pathname,
-    window.location.pathname,
-    true
-  );
 }
 
-async function onDislikeBtnClicked() {
-  const user = await getCurrentUser();
-  if (!user) {
-    alert("You must be logged in to dislike a highlight.");
-    return;
-  }
-  const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
-  updateLikeCount(
-    highlightId,
-    window.location.hostname + window.location.pathname,
-    window.location.pathname,
-    false
-  );
+// Initialize modal events
+export function initializeModalEvents() {
+  const closeButton = document.querySelector(".close");
+  closeButton.onclick = closeModal;
+
+  const submitButton = document.getElementById("submitComment");
+  submitButton.onclick = () => {
+    const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
+    submitComment(highlightId);
+  };
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function (event) {
+    const modal = document.getElementById("myModal");
+    if (event.target == modal) {
+      closeModal();
+    }
+  };
 }
 
-async function onCommentBtnClicked() {
+export async function onCommentBtnClicked() {
   const user = await getCurrentUser();
   if (!user) {
-    alert("You must be logged in to comment a highlight.");
+    console.log("User must be logged in to comment on a highlight.");
     return;
   }
 
-  const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
-  let comment = prompt("Comment here:");
-  if (comment == null || comment == "") {
-    console.log("User cancelled the comment prompt.");
-  } else {
-    console.log("Comment: " + comment, highlightId);
-    await addCommentToHighlight(highlightId, user, comment);
+  // const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
+  // const highlight = await getHighlightById(highlightId);
+  if (currentHighlightEl) {
+    const highlightedText = currentHighlightEl.textContent.trim(); // Get the text content of the highlight
+    openModal(highlightedText); // Open the modal with the highlighted text
   }
 }
 

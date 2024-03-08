@@ -138,6 +138,8 @@ function truncateText(text, wordLimit) {
 
 (async function initializeHighlightsList() {
   let highlights = [];
+
+  const { user } = await chrome.storage.sync.get({ user: {} });
   try {
     highlights = await getFromBackgroundPage(
       { action: "get-highlights" },
@@ -152,29 +154,37 @@ function truncateText(text, wordLimit) {
     updateHighlightsListState();
     return;
   }
-
+  console.log("highlights", highlights);
   // Populate with new elements
-  highlights.forEach(([highlightId, highlightText]) => {
+  highlights.forEach((highlight) => {
     const newEl = document.createElement("div");
     newEl.classList.add("highlight", "current");
-    newEl.innerText = truncateText(highlightText, 25);
+    newEl.innerHTML = `<strong>${highlight.user}:</strong> <span>${truncateText(
+      highlight.text,
+      25
+    )}</span>`;
     newEl.addEventListener("click", () => {
-      chrome.runtime.sendMessage({ action: "show-highlight", highlightId });
+      chrome.runtime.sendMessage({
+        action: "show-highlight",
+        highlightId: highlight.id,
+      });
     });
-    const newDeleteIconEl = document.createElement("span");
-    newDeleteIconEl.classList.add("material-icons", "delete-icon");
-    newDeleteIconEl.innerText = "delete";
-    newDeleteIconEl.onclick = () => {
-      chrome.runtime.sendMessage(
-        { action: "remove-highlight", highlightId },
-        () => {
-          // newEl.remove();
-          // updateHighlightsListState();
-          alert("Highlight removed");
-        }
-      );
-    };
-    newEl.appendChild(newDeleteIconEl);
+    if (user?.username === highlight.user) {
+      const newDeleteIconEl = document.createElement("span");
+      newDeleteIconEl.classList.add("material-icons", "delete-icon");
+      newDeleteIconEl.innerText = "delete";
+      newDeleteIconEl.onclick = () => {
+        chrome.runtime.sendMessage(
+          { action: "remove-highlight", highlightId: highlight.id },
+          () => {
+            // newEl.remove();
+            // updateHighlightsListState();
+            alert("Highlight removed");
+          }
+        );
+      };
+      newEl.appendChild(newDeleteIconEl);
+    }
     highlightsListElement.appendChild(newEl);
   });
 
@@ -230,6 +240,7 @@ function truncateText(text, wordLimit) {
   const lostHighlights = await getFromBackgroundPage({
     action: "get-lost-highlights",
   });
+  const { user } = await chrome.storage.sync.get({ user: {} });
 
   if (!Array.isArray(lostHighlights) || lostHighlights.length == 0) {
     return;
@@ -241,7 +252,10 @@ function truncateText(text, wordLimit) {
 
     const newEl = document.createElement("div");
     newEl.classList.add("highlight", "lost");
-    newEl.innerText = truncateText(lostHighlight.string, 25);
+    newEl.innerHTML = `<strong>${
+      lostHighlight.userId
+    }:</strong> <span>${truncateText(lostHighlight.string, 25)}</span>`;
+
     newEl.addEventListener("click", () => {
       chrome.runtime.sendMessage({
         action: "open-tab-and-show-highlight",
@@ -251,19 +265,21 @@ function truncateText(text, wordLimit) {
         },
       });
     });
-    const newDeleteIconEl = document.createElement("span");
-    newDeleteIconEl.classList.add("material-icons", "delete-icon");
-    newDeleteIconEl.innerText = "delete";
-    newDeleteIconEl.onclick = () => {
-      chrome.runtime.sendMessage(
-        { action: "remove-highlight", highlightId: lostHighlight.index },
-        () => {
-          newEl.remove();
-          updateHighlightsListState();
-        }
-      );
-    };
-    newEl.appendChild(newDeleteIconEl);
+    if (user?.username === lostHighlight.userId) {
+      const newDeleteIconEl = document.createElement("span");
+      newDeleteIconEl.classList.add("material-icons", "delete-icon");
+      newDeleteIconEl.innerText = "delete";
+      newDeleteIconEl.onclick = () => {
+        chrome.runtime.sendMessage(
+          { action: "remove-highlight", highlightId: lostHighlight.index },
+          () => {
+            newEl.remove();
+            updateHighlightsListState();
+          }
+        );
+      };
+      newEl.appendChild(newDeleteIconEl);
+    }
     highlightsListElement.appendChild(newEl);
   });
 

@@ -1,63 +1,154 @@
 .highlighter--highlighted.highlighter--hovered {
-    box-shadow: 0 1px 0 grey;
+  box-shadow: 0 1px 0 grey;
 }
 
 #highlighter--hover-tools {
-    position: fixed;
-    padding-bottom: 8px;
-    z-index: 10000;
+  position: fixed;
+  padding-bottom: 8px;
+  z-index: 10000;
 }
 
 #highlighter--hover-tools--container {
-    position: relative;
-    border-radius: 5px;
-    padding: 1px 0;
-    background-color: #f0f0f0;
-    /* width: 108px; When changing this, also update moveToolbarToHighlight() in hoverTools.js */
-    height: 37px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.25));
+  position: relative;
+  border-radius: 5px;
+  padding: 1px 0;
+  background-color: #f0f0f0;
+  /* width: 108px; When changing this, also update moveToolbarToHighlight() in hoverTools.js */
+  height: 37px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.25));
 }
 
 .highlighter--icon {
-    display: inline-block;
-    width: 25px;
-    height: 25px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    cursor: pointer;
-    margin: 0 5px;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  margin: 0 5px;
 }
 
 .highlighter--btn {
-    display: inline-block;
-    height: 25px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    cursor: pointer;
-    margin: 0 5px;
+  display: inline-block;
+  height: 25px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  margin: 0 5px;
 }
 
 .highlighter--icon:hover {
-    filter: opacity(0.92);
+  filter: opacity(0.92);
 }
 
 .highlighter--icon-like {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/images/like.png');
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/like.png");
 }
 
 .highlighter--icon-delete {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/images/delete.svg');
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/delete.svg");
 }
 
 .highlighter--icon-dislike {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/images/dislike.png');
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/dislike.png");
 }
 
 .highlighter--icon-comment {
-    background-image:url('chrome-extension://__MSG_@@extension_id__/images/comment.png');
+  background-image: url("chrome-extension://__MSG_@@extension_id__/images/comment.png");
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+  z-index: 100;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%; /* Could be more or less, depending on screen size */
+  z-index: 100;
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Textarea style */
+.modal-content textarea {
+  width: calc(100% - 40px); /* Full-width minus padding */
+  padding: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  display: block;
+  font-size: 16px;
+  line-height: 1.5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Button style */
+.modal-content button {
+  padding: 10px 20px;
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.modal-content button:hover {
+  background-color: #4cae4c;
+}
+.modal-feedback {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.modal-feedback.success {
+  color: #28a745;
+}
+
+.modal-feedback.error {
+  color: #dc3545;
+}
+.loading-indicator {
+  /* Add your styles for the loading indicator */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  display: none;
 }

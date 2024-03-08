@@ -1,15 +1,19 @@
-import { executeInCurrentTab } from '../utils.js';
+import { executeInCurrentTab } from "../utils.js";
 
 function getHighlights() {
-    function contentScriptGetHighlights() {
-        const highlightsMap = window.highlighterAPI.highlights.getAllFound();
+  function contentScriptGetHighlights() {
+    const highlightsMap = window.highlighterAPI.highlights.getAllFound();
+    console.log("highlightsMap", highlightsMap);
+    // Return an array instead of a Map since for some reason Maps don't get returned properly (serialization issue?)
+    // Note that we could return a dict instead, but that we would lose ordering
+    return Array.from(highlightsMap).map(([highlightId, { text, user }]) => ({
+      id: highlightId,
+      text,
+      user,
+    }));
+  }
 
-        // Return an array instead of a Map since for some reason Maps don't get returned properly (serialization issue?)
-        // Note that we could return a dict instead, but that we would lose ordering
-        return Array.from(highlightsMap);
-    }
-
-    return executeInCurrentTab({ func: contentScriptGetHighlights });
+  return executeInCurrentTab({ func: contentScriptGetHighlights });
 }
 
 export default getHighlights;

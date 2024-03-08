@@ -228,16 +228,16 @@ body {
 
 .highlight {
   display: flex;
-  align-items: center;
+  align-items: start;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: start;
   margin: 0 18px 15px 18px;
   padding: 10px 14px;
-
   cursor: pointer;
   font-size: 14px;
   background-color: white;
   border-radius: 5px;
+  gap: 10px;
 }
 
 .highlight .delete-icon {
