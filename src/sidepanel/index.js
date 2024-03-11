@@ -1,45 +1,92 @@
-import { getHighlightById } from "./utils/utils";
+import {
+  addCommentToHighlight,
+  getCurrentUser,
+  getHighlightById,
+} from "./utils/utils.js"; // Ensure these imports are correct based on your project structure
 
 const highlightDetailsDivEl = document.getElementById("highlight_details");
 const highlightTextEl = document.getElementById("highlight_text");
 const highlightCreatedByEl = document.getElementById("created_by");
 const highlightCreatedAtEl = document.getElementById("created_at");
+document.getElementById("addCommentSection").style.display = "none"; // Hide the comment section by default
 
-if (!highlightDetailsDivEl) {
-  highlightDetailsDivEl.display = "none";
-}
+let currentHighlightId = null; // Store the current highlight ID globally
+
+document
+  .getElementById("toggleCommentInputBtn")
+  .addEventListener("click", () => {
+    const addCommentSection = document.getElementById("addCommentSection");
+    if (addCommentSection.style.display === "none") {
+      addCommentSection.style.display = "block";
+    } else {
+      addCommentSection.style.display = "none";
+    }
+  });
+
+document
+  .getElementById("submitCommentBtn")
+  .addEventListener("click", async () => {
+    const commentText = document.getElementById("newCommentText").value.trim();
+    if (!commentText) {
+      alert("Please enter a comment before posting.");
+      return;
+    }
+
+    const user = await getCurrentUser();
+    if (!user) {
+      // Prompt the user to log in
+      alert("You must be logged in to post comments.");
+      return;
+    }
+
+    try {
+      // Assume `addCommentToHighlight` is a function to submit the comment
+      await addCommentToHighlight(currentHighlightId, { user, commentText });
+      document.getElementById("newCommentText").value = ""; // Clear the textarea
+      alert("Comment posted successfully.");
+      await updateHighlightDetails(currentHighlightId);
+      // Optionally, refresh comments to display the newly added one
+    } catch (error) {
+      console.error("Error posting comment:", error);
+      alert("Failed to post comment. Please try again.");
+    }
+  });
 
 async function updateHighlightDetails(highlightId) {
+  currentHighlightId = highlightId; // Update the global highlight ID
   const highlight = await getHighlightById(highlightId);
-  console.log("highlight", highlight);
+
   if (highlight) {
-    // Existing code to update highlight details
     highlightDetailsDivEl.style.display = "block";
     highlightTextEl.innerText = highlight.string;
     highlightCreatedByEl.innerText = highlight.userId;
     highlightCreatedAtEl.innerText = new Date(
       highlight.createdAt
     ).toDateString();
-    document.getElementById("like-count").textContent = highlight.likes || 0;
+    document.getElementById("like-count").textContent = highlight.likes || "0";
     document.getElementById("dislike-count").textContent =
-      highlight.dislikes || 0;
+      highlight.dislikes || "0";
     document.getElementById("comment-count").textContent =
-      highlight.commentsCount || 0;
+      highlight.commentsCount || "0";
+    // Make sure elements exist before adding event listeners
 
-    // New code to populate comments
+    // likeBtn.addEventListener("click", () => handleLikeDislike(true, highlight));
+    // dislikeBtn.addEventListener("click", () => handleLikeDislike(false, highlight));
+    // commentBtn.addEventListener("click", () => handleComment());
+
     const commentsDiv = document.getElementById("comments");
-    commentsDiv.innerHTML = ""; // Clear existing comments
-    if (highlight.comments) {
+    commentsDiv.innerHTML = ""; // Reset comments
+    if (highlight.comments && highlight.comments.length) {
       highlight.comments.forEach((comment) => {
         const commentEl = document.createElement("div");
         commentEl.className = "highlight_comment";
         commentEl.innerHTML = `
-        <div class="comment_user">${comment.user}</div>
-        <div class="comment_text">${comment.text}</div>
-        <div class="comment_date">${new Date(
-          comment.createdAt
-        ).toLocaleString()}</div>
-      `;
+          <div class="comment_user">${comment.user}</div>
+          <div class="comment_text">${comment.text}</div>
+          <div class="comment_date">${new Date(
+            comment.createdAt
+          ).toLocaleString()}</div>
+        `;
         commentsDiv.appendChild(commentEl);
       });
     } else {
@@ -50,18 +97,19 @@ async function updateHighlightDetails(highlightId) {
   }
 }
 
-const initalize = async () => {
-  async function getSelectedHighlightId() {
-    return chrome.storage.local.get("selectedHighlightId");
+// Initialize the side panel by fetching the highlight ID from storage
+async function initialize() {
+  const result = await chrome.storage.local.get("selectedHighlightId");
+  if (result.selectedHighlightId) {
+    updateHighlightDetails(result.selectedHighlightId);
   }
+}
 
-  const { selectedHighlightId } = await getSelectedHighlightId();
-  updateHighlightDetails(selectedHighlightId);
-};
-
-await initalize();
+// Listen for messages to update highlight details
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "update_highlight_details") {
+  if (message.action === "update_highlight_details" && message.highlightId) {
     updateHighlightDetails(message.highlightId);
   }
 });
+
+initialize(); // Removed 'await' as top-level await is not allowed here

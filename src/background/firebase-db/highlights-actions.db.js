@@ -73,8 +73,38 @@ async function getHighlightsNotEqualToHref({ href }) {
   }
 }
 
+async function addCommentToHighlight(payload) {
+  const { uuid, user, commentText } = payload;
+  const highlight = await getHighlightById(uuid);
+
+  if (!highlight) {
+    console.error("Highlight not found to add comment");
+    return;
+  }
+
+  const newComment = {
+    text: commentText,
+    user: user.username,
+    createdAt: Date.now(),
+  };
+
+  if (highlight.comments) {
+    highlight.comments.push(newComment);
+    highlight.commentsCount += 1;
+  } else {
+    highlight.comments = [newComment];
+    highlight.commentsCount = 1;
+  }
+
+  highlight.updatedAt = Date.now();
+  // await chrome.storage.local.set({ highlights });
+  await storeHighlightInFirebase(highlight);
+  // See src/background/firebase-db/highlights-actions.db.js for the implementation of
+}
+
 export {
   storeHighlightInFirebase,
   getHighlightById,
   getHighlightsNotEqualToHref,
+  addCommentToHighlight,
 };

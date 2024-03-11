@@ -1,4 +1,9 @@
-import { getCurrentUser, getHighlightById, updateLikeCount } from "../utils/storageManager.js";
+import {
+  getCurrentUser,
+  getHighlightById,
+  storeHighlightIdIntoLocalStorage,
+  updateLikeCount,
+} from "../utils/storageManager.js";
 
 export async function onDislikeBtnClicked(currentHighlightEl) {
   const user = await getCurrentUser();
@@ -7,12 +12,7 @@ export async function onDislikeBtnClicked(currentHighlightEl) {
     return;
   }
   const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
-  updateLikeCount(
-    highlightId,
-    window.location.hostname + window.location.pathname,
-    window.location.pathname,
-    false
-  );
+  updateLikeCount(highlightId, false);
 }
 
 export async function onLikeBtnClicked(currentHighlightEl) {
@@ -22,12 +22,7 @@ export async function onLikeBtnClicked(currentHighlightEl) {
     return;
   }
   const highlightId = currentHighlightEl.getAttribute("data-highlight-id");
-  updateLikeCount(
-    highlightId,
-    window.location.hostname + window.location.pathname,
-    window.location.pathname,
-    true
-  );
+  updateLikeCount(highlightId, true);
 }
 
 export async function updateLikeDislikeCounts(highlightId) {

@@ -67,6 +67,21 @@ export function createModal() {
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 }
 
+export function createErrorModal() {
+  const modalHTML = `
+    <div id="errorModal" class="modal">
+      <div class="modal-content">
+        <span id="errorClose" class="errorClose">&times;</span>
+        <div class="modal-header">
+          <h3>LAYR</h3>
+        </div>
+        <p id="errorModalMessage">You must be logged in to comment on a highlight.</p>
+      </div>
+    </div>
+    `;
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
+}
+
 export function showLoadingIndicator() {
   document.getElementById("loadingIndicator").style.display = "block";
 }

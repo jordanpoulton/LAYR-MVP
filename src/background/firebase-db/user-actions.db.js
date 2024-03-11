@@ -80,4 +80,15 @@ async function findUserByEmail(email) {
   }
 }
 
-export { loginUser, findUserByUsername, findUserByEmail, registerUser };
+async function getCurrentUser() {
+  const { user } = await chrome.storage.sync.get({ user: {} });
+  return user;
+}
+
+export {
+  loginUser,
+  findUserByUsername,
+  findUserByEmail,
+  registerUser,
+  getCurrentUser,
+};

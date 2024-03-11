@@ -2,7 +2,7 @@
 /* eslint-disable comma-dangle */
 import { addHighlightError } from "./errorManager.js";
 
-import { off, onValue, ref } from "firebase/database";
+import { get, off, onValue, ref } from "firebase/database";
 import { db } from "../../background/firebase-db/firebase.js";
 import { highlight } from "../highlight/index.js";
 import { getFromBackgroundPage } from "./getFromBackgroundPage.js";
@@ -67,37 +67,7 @@ async function store(
   return newHighlight.uuid;
 }
 
-async function addCommentToHighlight(uuid, user, commentText) {
-  const highlight = await getHighlightById(uuid);
-
-  if (!highlight) {
-    console.error("Highlight not found to add comment");
-    return;
-  }
-
-  const newComment = {
-    text: commentText,
-    user: user.username,
-    createdAt: Date.now(),
-  };
-
-  if (highlight.comments) {
-    highlight.comments.push(newComment);
-    highlight.commentsCount += 1;
-  } else {
-    highlight.comments = [newComment];
-    highlight.commentsCount = 1;
-  }
-
-  highlight.updatedAt = Date.now();
-  // await chrome.storage.local.set({ highlights });
-  chrome.runtime.sendMessage({
-    action: "store-highlight-in-firebase",
-    payload: highlight,
-  }); // See src/background/firebase-db/highlights-actions.db.js for the implementation of
-}
-
-async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
+async function updateLikeCount(highlightIndex, like) {
   const [{ highlights }, user, highlightObject] = await Promise.all([
     chrome.storage.local.get({ highlights: {} }),
     getCurrentUser(),
@@ -169,11 +139,6 @@ async function updateLikeCount(highlightIndex, url, alternativeUrl, like) {
   }
 }
 
-async function getCurrentUser() {
-  const { user } = await chrome.storage.sync.get({ user: {} });
-  return user;
-}
-
 async function getHighlightById(uuid) {
   const highlight = await getFromBackgroundPage({
     action: "get-highlight-by-id",
@@ -231,6 +196,10 @@ async function setupFirebaseListeners(url, callback) {
 
   // Return a function to detach the listener when no longer needed
   return () => off(urlRef);
+}
+
+async function getCurrentUser() {
+  return getFromBackgroundPage({ action: "get-current-user" });
 }
 
 async function loadAll(url, alternativeUrl) {
@@ -400,7 +369,6 @@ function escapeCSSString(cssString) {
 }
 
 export {
-  addCommentToHighlight,
   clearPage,
   getCurrentUser,
   getHighlightById,
@@ -408,7 +376,7 @@ export {
   loadAll,
   removeHighlight,
   store,
+  storeHighlightIdIntoLocalStorage,
   update,
   updateLikeCount,
-  storeHighlightIdIntoLocalStorage,
 };

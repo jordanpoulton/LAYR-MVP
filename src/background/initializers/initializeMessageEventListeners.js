@@ -15,6 +15,7 @@ import {
 import openTabAndShowHighlight from "../actions/openTabAndShowHighlight.js";
 import { trackEvent } from "../analytics.js";
 import {
+  addCommentToHighlight,
   getHighlightById,
   getHighlightsNotEqualToHref,
   storeHighlightInFirebase,
@@ -22,6 +23,7 @@ import {
 import {
   findUserByEmail,
   findUserByUsername,
+  getCurrentUser,
   loginUser,
   registerUser,
 } from "../firebase-db/user-actions.db.js";
@@ -107,6 +109,12 @@ function initializeMessageEventListeners() {
         return true; // return asynchronously
       case "signup-user":
         wrapResponse(registerUser(request.payload), sendResponse);
+        return true; // return asynchronously
+      case "add-comment-to-highlight":
+        wrapResponse(addCommentToHighlight(request.payload), sendResponse);
+        return true; // return asynchronously
+      case "get-current-user":
+        wrapResponse(getCurrentUser(request.payload), sendResponse);
         return true; // return asynchronously
       case "open_side_panel":
         openSidepanel(_sender);

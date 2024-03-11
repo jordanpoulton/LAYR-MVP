@@ -32,6 +32,7 @@
           <div
             class="highlighter--icon highlighter--icon-like"
             title="like"
+            id="likeBtn"
           ></div>
           <span id="like-count">0</span>
         </div>
@@ -39,6 +40,7 @@
           <div
             class="highlighter--icon highlighter--icon-dislike"
             title="dislike"
+            id="dislikeBtn"
           ></div>
           <span id="dislike-count">0</span>
         </div>
@@ -46,11 +48,23 @@
           <div
             class="highlighter--icon highlighter--icon-comment"
             title="comment"
+            id="commentBtn"
           ></div>
           <span id="comment-count">0</span>
         </div>
       </div>
       <div id="highlight_comments" class="highlight-comments">
+        <div title="Post your comment" class="comment-toggle">
+          <button id="toggleCommentInputBtn">Join the Conversation</button>
+        </div>
+        <div class="add-comment" id="addCommentSection">
+          <textarea
+            id="newCommentText"
+            placeholder="Write your comment..."
+            rows="2"
+          ></textarea>
+          <button id="submitCommentBtn">Post Comment</button>
+        </div>
         <h3>Comments</h3>
         <div id="comments"></div>
       </div>

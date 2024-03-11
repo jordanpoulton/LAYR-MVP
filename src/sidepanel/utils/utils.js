@@ -1,8 +1,7 @@
 import { getFromBackgroundPage } from "./getFromBackgroundPage";
 
 async function getCurrentUser() {
-  const { user } = await chrome.storage.sync.get({ user: {} });
-  return user;
+  return getFromBackgroundPage({ action: "get-current-user" });
 }
 
 async function getHighlightById(uuid) {
@@ -17,4 +16,27 @@ async function getHighlightById(uuid) {
   return null; // Return null if no match is found
 }
 
-export { getCurrentUser, getHighlightById };
+async function addCommentToHighlight(highlightId, { user, commentText }) {
+  // Placeholder for your implementation
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage(
+      {
+        action: "add-comment-to-highlight",
+        payload: {
+          uuid: highlightId,
+          user,
+          commentText,
+        },
+      },
+      (response) => {
+        if (response.success) {
+          resolve();
+        } else {
+          reject(new Error(response.error || "Unknown error"));
+        }
+      }
+    );
+  });
+}
+
+export { addCommentToHighlight, getCurrentUser, getHighlightById };

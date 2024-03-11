@@ -4,9 +4,17 @@ import {
   onLikeBtnClicked,
   updateLikeDislikeCounts,
 } from "./hover-utils.js";
-import { addCommentToHighlight, getCurrentUser } from "../utils/storageManager";
+import { getCurrentUser } from "../utils/storageManager";
 
-import { closeModal, createModal, hideLoadingIndicator, openModal, showFeedback, showLoadingIndicator } from "./modal.js";
+import {
+  closeModal,
+  createErrorModal,
+  createModal,
+  hideLoadingIndicator,
+  openModal,
+  showFeedback,
+  showLoadingIndicator,
+} from "./modal.js";
 
 let hoverToolEl = null;
 let hoverToolTimeout = null;
@@ -43,6 +51,7 @@ function initializeHoverTools() {
       onDislikeBtnClicked(currentHighlightEl)
     );
     createModal();
+    createErrorModal();
     initializeModalEvents(currentHighlightEl);
   });
 
@@ -184,7 +193,14 @@ export async function submitComment(highlightId) {
       return;
     }
 
-    await addCommentToHighlight(highlightId, user, commentText);
+    await chrome.runtime.sendMessage({
+      action: "add-comment-to-highlight",
+      payload: {
+        uuid: highlightId,
+        user,
+        commentText,
+      },
+    });
     commentInput.value = ""; // Clear the input field
     showFeedback("Comment added successfully.");
     setTimeout(closeModal, 2000); // Close the modal after 2 seconds
@@ -219,7 +235,7 @@ export function initializeModalEvents() {
 export async function onCommentBtnClicked() {
   const user = await getCurrentUser();
   if (!user) {
-    console.log("User must be logged in to comment on a highlight.");
+    showErrorModal("You must be logged in to comment on a highlight.");
     return;
   }
 
@@ -229,6 +245,30 @@ export async function onCommentBtnClicked() {
     const highlightedText = currentHighlightEl.textContent.trim(); // Get the text content of the highlight
     openModal(highlightedText); // Open the modal with the highlighted text
   }
+}
+
+function showErrorModal(message) {
+  const modal = document.getElementById("errorModal");
+  const span = document.getElementById("errorClose");
+  const messageElement = document.getElementById("errorModalMessage");
+
+  // Setting the error message
+  messageElement.innerText = message;
+
+  // Showing the modal
+  modal.style.display = "block";
+
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function () {
+    modal.style.display = "none";
+  };
+
+  // Also close the modal if the user clicks anywhere outside of the modal content
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
 }
 
 export {

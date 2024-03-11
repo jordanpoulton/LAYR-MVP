@@ -106,3 +106,55 @@ body {
   padding: 20px;
   color: #666;
 }
+
+.add-comment textarea {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-family: "Roboto", sans-serif;
+  resize: vertical; /* Allows the user to resize the textarea vertically */
+}
+
+.add-comment button {
+  display: inline-block;
+  background-color: #4caf50; /* A green background for the submit button */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: "Roboto", sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.add-comment button:hover {
+  background-color: #45a049; /* Darker shade of green on hover */
+}
+
+/* Styling for disabled button to indicate it cannot be clicked */
+.add-comment button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.add-comment {
+  margin-bottom: 20px;
+  display: none;
+}
+.comment-toggle button {
+  background-color: #4caf50; /* Green */
+  color: white;
+  padding: 10px 24px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+}
+
+.comment-toggle button:hover {
+  background-color: #45a049;
+}
