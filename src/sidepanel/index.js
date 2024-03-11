@@ -1,3 +1,4 @@
+import { initializeEventListeners } from "./utils/eventListeners.js";
 import {
   addCommentToHighlight,
   getCurrentUser,
@@ -8,20 +9,10 @@ const highlightDetailsDivEl = document.getElementById("highlight_details");
 const highlightTextEl = document.getElementById("highlight_text");
 const highlightCreatedByEl = document.getElementById("created_by");
 const highlightCreatedAtEl = document.getElementById("created_at");
-document.getElementById("addCommentSection").style.display = "none"; // Hide the comment section by default
 
 let currentHighlightId = null; // Store the current highlight ID globally
 
-document
-  .getElementById("toggleCommentInputBtn")
-  .addEventListener("click", () => {
-    const addCommentSection = document.getElementById("addCommentSection");
-    if (addCommentSection.style.display === "none") {
-      addCommentSection.style.display = "block";
-    } else {
-      addCommentSection.style.display = "none";
-    }
-  });
+initializeEventListeners();
 
 document
   .getElementById("submitCommentBtn")
