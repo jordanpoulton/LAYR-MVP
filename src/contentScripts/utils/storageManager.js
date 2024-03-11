@@ -2,15 +2,13 @@
 /* eslint-disable comma-dangle */
 import { addHighlightError } from "./errorManager.js";
 
-import { get, off, onValue, ref } from "firebase/database";
+import { off, onValue, ref } from "firebase/database";
 import { db } from "../../background/firebase-db/firebase.js";
 import { highlight } from "../highlight/index.js";
+import { showErrorModal } from "../hoverTools/hover-utils.js";
 import { getFromBackgroundPage } from "./getFromBackgroundPage.js";
 
 const STORE_FORMAT_VERSION = chrome.runtime.getManifest().version;
-
-const RED_COLOR = "#FF7F7F";
-const GREEN_COLOR = "#44ff93";
 
 let alternativeUrlIndexOffset = 0; // Number of elements stored in the alternativeUrl Key. Used to map highlight indices to correct key
 
@@ -67,75 +65,32 @@ async function store(
   return newHighlight.uuid;
 }
 
-async function updateLikeCount(highlightIndex, like) {
-  const [{ highlights }, user, highlightObject] = await Promise.all([
-    chrome.storage.local.get({ highlights: {} }),
-    getCurrentUser(),
+async function updateLikeCount(highlightIndex, like, user) {
+  const [highlightObject] = await Promise.all([
     getHighlightById(highlightIndex),
   ]);
 
-  if (!user) {
-    alert("You need to be logged in to have interactions with highlights.");
+  if (!highlightObject) {
+    showErrorModal("Highlight not found");
     return;
   }
 
   if (highlightObject) {
-    const alreadyLiked = highlightObject?.likedBy?.includes(user.username);
-    const alreadyDisliked = highlightObject?.dislikedBy?.includes(
-      user.username
-    );
-
-    if (like) {
-      if (alreadyLiked) return; // User already liked this highlight
-
-      // Remove dislike if previously disliked
-      if (alreadyDisliked) {
-        highlightObject.dislikedBy = highlightObject.dislikedBy.filter(
-          (username) => username !== user.username
-        );
-        highlightObject.dislikes = Math.max(highlightObject.dislikes - 1, 0);
-      }
-
-      // Add like
-      highlightObject.likes += 1;
-      highlightObject.likedBy.push(user.username);
-    } else {
-      if (alreadyDisliked) return; // User already disliked this highlight
-
-      // Remove like if previously liked
-      if (alreadyLiked) {
-        highlightObject.likedBy = highlightObject.likedBy.filter(
-          (username) => username !== user.username
-        );
-        highlightObject.likes = Math.max(highlightObject.likes - 1, 0);
-      }
-
-      // Add dislike
-      highlightObject.dislikes += 1;
-      highlightObject.dislikedBy.push(user.username);
-    }
-
-    if (highlightObject.likes > highlightObject.dislikes) {
-      highlightObject.color = GREEN_COLOR;
-      highlightObject.textColor = "black";
-    } else if (highlightObject.likes < highlightObject.dislikes) {
-      highlightObject.color = RED_COLOR;
-      highlightObject.textColor = "black";
-    }
-
-    highlightObject.updatedAt = Date.now();
-    await chrome.storage.local.set({ highlights });
-    chrome.runtime.sendMessage({
-      action: "store-highlight-in-firebase",
-      payload: highlightObject,
-    }); // See src/background/firebase-db/highlights-actions.db.js for the implementation of
+    const newHighlightObject = await getFromBackgroundPage({
+      action: "update-highlight-like-dislike-count",
+      payload: {
+        highlightId: highlightIndex,
+        like,
+        user,
+      },
+    });
     const existingHighlight = $(
       `.highlighter--highlighted[data-highlight-id='${highlightIndex}']`
     );
     $(".highlighter--hovered").removeClass("highlighter--hovered");
 
-    existingHighlight.css("backgroundColor", highlightObject.color); // Change the background color attribute
-    existingHighlight.css("color", highlightObject.textColor); // Also change the text color
+    existingHighlight.css("backgroundColor", newHighlightObject.color); // Change the background color attribute
+    existingHighlight.css("color", newHighlightObject.textColor); // Also change the text color
   }
 }
 

@@ -3,6 +3,7 @@ import {
   addCommentToHighlight,
   getCurrentUser,
   getHighlightById,
+  handleLikeDislikeClick,
 } from "./utils/utils.js"; // Ensure these imports are correct based on your project structure
 
 const highlightDetailsDivEl = document.getElementById("highlight_details");
@@ -46,6 +47,8 @@ document
 async function updateHighlightDetails(highlightId) {
   currentHighlightId = highlightId; // Update the global highlight ID
   const highlight = await getHighlightById(highlightId);
+  const likeBtn = document.getElementById("likeBtn");
+  const dislikeBtn = document.getElementById("dislikeBtn");
 
   if (highlight) {
     highlightDetailsDivEl.style.display = "block";
@@ -57,6 +60,17 @@ async function updateHighlightDetails(highlightId) {
     document.getElementById("like-count").textContent = highlight.likes || "0";
     document.getElementById("dislike-count").textContent =
       highlight.dislikes || "0";
+
+    likeBtn.addEventListener("click", async () => {
+      handleLikeDislikeClick(highlightId, true);
+      updateHighlightDetails(highlightId);
+    });
+
+    dislikeBtn.addEventListener("click", async () => {
+      handleLikeDislikeClick(highlightId, false);
+      updateHighlightDetails(highlightId);
+    });
+
     document.getElementById("comment-count").textContent =
       highlight.commentsCount || "0";
     // Make sure elements exist before adding event listeners

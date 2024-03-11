@@ -19,6 +19,7 @@ import {
   getHighlightById,
   getHighlightsNotEqualToHref,
   storeHighlightInFirebase,
+  updateLikeCount,
 } from "../firebase-db/highlights-actions.db.js";
 import {
   findUserByEmail,
@@ -115,6 +116,9 @@ function initializeMessageEventListeners() {
         return true; // return asynchronously
       case "get-current-user":
         wrapResponse(getCurrentUser(request.payload), sendResponse);
+        return true; // return asynchronously
+      case "update-highlight-like-dislike-count":
+        wrapResponse(updateLikeCount(request.payload), sendResponse);
         return true; // return asynchronously
       case "open_side_panel":
         openSidepanel(_sender);

@@ -1,5 +1,8 @@
+import { equalTo, get, orderByChild, query, ref, set } from "firebase/database";
 import { db } from "./firebase";
-import { ref, set, get, query, orderByChild, equalTo } from "firebase/database";
+
+const RED_COLOR = "#FF7F7F";
+const GREEN_COLOR = "#44ff93";
 
 async function storeHighlightInFirebase(newHighlight) {
   try {
@@ -102,9 +105,64 @@ async function addCommentToHighlight(payload) {
   // See src/background/firebase-db/highlights-actions.db.js for the implementation of
 }
 
+async function updateLikeCount(payload) {
+  const { highlightId, like, user } = payload;
+  const [highlightObject] = await Promise.all([getHighlightById(highlightId)]);
+
+  if (highlightObject) {
+    const alreadyLiked = highlightObject?.likedBy?.includes(user.username);
+    const alreadyDisliked = highlightObject?.dislikedBy?.includes(
+      user.username
+    );
+
+    if (like) {
+      if (alreadyLiked) return; // User already liked this highlight
+
+      // Remove dislike if previously disliked
+      if (alreadyDisliked) {
+        highlightObject.dislikedBy = highlightObject.dislikedBy.filter(
+          (username) => username !== user.username
+        );
+        highlightObject.dislikes = Math.max(highlightObject.dislikes - 1, 0);
+      }
+
+      // Add like
+      highlightObject.likes += 1;
+      highlightObject.likedBy.push(user.username);
+    } else {
+      if (alreadyDisliked) return; // User already disliked this highlight
+
+      // Remove like if previously liked
+      if (alreadyLiked) {
+        highlightObject.likedBy = highlightObject.likedBy.filter(
+          (username) => username !== user.username
+        );
+        highlightObject.likes = Math.max(highlightObject.likes - 1, 0);
+      }
+
+      // Add dislike
+      highlightObject.dislikes += 1;
+      highlightObject.dislikedBy.push(user.username);
+    }
+
+    if (highlightObject.likes > highlightObject.dislikes) {
+      highlightObject.color = GREEN_COLOR;
+      highlightObject.textColor = "black";
+    } else if (highlightObject.likes < highlightObject.dislikes) {
+      highlightObject.color = RED_COLOR;
+      highlightObject.textColor = "black";
+    }
+
+    highlightObject.updatedAt = Date.now();
+    await storeHighlightInFirebase(highlightObject);
+    return highlightObject;
+  }
+}
+
 export {
-  storeHighlightInFirebase,
+  addCommentToHighlight,
   getHighlightById,
   getHighlightsNotEqualToHref,
-  addCommentToHighlight,
+  storeHighlightInFirebase,
+  updateLikeCount,
 };

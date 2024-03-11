@@ -2,6 +2,7 @@ import { HIGHLIGHT_CLASS } from "../highlight/index.js";
 import {
   onDislikeBtnClicked,
   onLikeBtnClicked,
+  showErrorModal,
   updateLikeDislikeCounts,
 } from "./hover-utils.js";
 import { getCurrentUser } from "../utils/storageManager";
@@ -245,30 +246,6 @@ export async function onCommentBtnClicked() {
     const highlightedText = currentHighlightEl.textContent.trim(); // Get the text content of the highlight
     openModal(highlightedText); // Open the modal with the highlighted text
   }
-}
-
-function showErrorModal(message) {
-  const modal = document.getElementById("errorModal");
-  const span = document.getElementById("errorClose");
-  const messageElement = document.getElementById("errorModalMessage");
-
-  // Setting the error message
-  messageElement.innerText = message;
-
-  // Showing the modal
-  modal.style.display = "block";
-
-  // When the user clicks on <span> (x), close the modal
-  span.onclick = function () {
-    modal.style.display = "none";
-  };
-
-  // Also close the modal if the user clicks anywhere outside of the modal content
-  window.onclick = function (event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  };
 }
 
 export {
