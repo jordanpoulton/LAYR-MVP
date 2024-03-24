@@ -253,4 +253,5 @@ export {
   initializeHoverTools,
   onHighlightMouseEnterOrClick,
   removeHighlightEventListeners,
+  getHoverToolEl,
 };

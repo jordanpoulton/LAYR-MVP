@@ -1,5 +1,6 @@
 import { equalTo, get, orderByChild, query, ref, set } from "firebase/database";
 import { db } from "./firebase";
+import { removeHighlight } from "../actions";
 
 const RED_COLOR = "#FF7F7F";
 const GREEN_COLOR = "#44ff93";
@@ -105,6 +106,44 @@ async function addCommentToHighlight(payload) {
   // See src/background/firebase-db/highlights-actions.db.js for the implementation of
 }
 
+async function deleteHighlightById(payload) {
+  try {
+    const { highlightId, user } = payload;
+    // Reference to the highlights node in Firebase
+    const highlightsRef = ref(db, "highlights");
+
+    // Create a query to find the highlight with the specified uuid
+    const highlightQuery = query(
+      highlightsRef,
+      orderByChild("id"),
+      equalTo(highlightId)
+    );
+
+    // Execute the query
+    const snapshot = await get(highlightQuery);
+
+    if (snapshot.exists()) {
+      // Get the key of the highlight to be deleted
+      const highlightKey = Object.keys(snapshot.val())[0];
+
+      // Reference to the specific highlight to be deleted
+      const highlightRef = ref(db, `highlights/${highlightKey}`);
+
+      // Delete the highlight from Firebase
+      await set(highlightRef, null);
+
+      removeHighlight(highlightId);
+
+      return true; // Return true if the highlight was successfully deleted
+    } else {
+      return false; // Return false if no match is found
+    }
+  } catch (error) {
+    console.error("Error deleting highlight by ID:", error);
+    throw error;
+  }
+}
+
 async function updateLikeCount(payload) {
   const { highlightId, like, user } = payload;
   const [highlightObject] = await Promise.all([getHighlightById(highlightId)]);
@@ -165,4 +204,5 @@ export {
   getHighlightsNotEqualToHref,
   storeHighlightInFirebase,
   updateLikeCount,
+  deleteHighlightById,
 };

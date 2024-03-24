@@ -154,7 +154,6 @@ function truncateText(text, wordLimit) {
     updateHighlightsListState();
     return;
   }
-  console.log("highlights", highlights);
   // Populate with new elements
   highlights.forEach((highlight) => {
     const newEl = document.createElement("div");
@@ -175,14 +174,21 @@ function truncateText(text, wordLimit) {
       newDeleteIconEl.innerText = "delete";
       newDeleteIconEl.onclick = () => {
         chrome.runtime.sendMessage(
-          { action: "remove-highlight", highlightId: highlight.id },
+          {
+            action: "delete-highlight-by-id",
+            payload: {
+              highlightId: highlight.id,
+              user,
+            },
+          },
           () => {
-            // newEl.remove();
-            // updateHighlightsListState();
-            alert("Highlight removed");
+            newEl.remove();
+            updateHighlightsListState();
+            alert("Highlight deleted");
           }
         );
-      };
+      }; // See src/background/firebase-db/highlights-actions.db.js for the implementation of
+
       newEl.appendChild(newDeleteIconEl);
     }
     highlightsListElement.appendChild(newEl);
@@ -271,10 +277,17 @@ function truncateText(text, wordLimit) {
       newDeleteIconEl.innerText = "delete";
       newDeleteIconEl.onclick = () => {
         chrome.runtime.sendMessage(
-          { action: "remove-highlight", highlightId: lostHighlight.index },
+          {
+            action: "delete-highlight-by-id",
+            payload: {
+              highlightId: highlight.id,
+              user,
+            },
+          },
           () => {
             newEl.remove();
             updateHighlightsListState();
+            alert("Highlight deleted");
           }
         );
       };
