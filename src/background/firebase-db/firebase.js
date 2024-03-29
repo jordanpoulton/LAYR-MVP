@@ -4,17 +4,18 @@ import { getDatabase } from "firebase/database";
 
 // TODO: Replace the following with your app's Firebase project configuration
 // See: https://firebase.google.com/docs/web/learn-more#config-object
+
 const firebaseConfig = {
-  apiKey: "AIzaSyAyYGEXZ_3ktQ6UJz1RgdryIiaXYuhNaTQ",
-  authDomain: "highlighter-7b30b.firebaseapp.com",
-  databaseURL: "https://highlighter-7b30b-default-rtdb.firebaseio.com",
-  projectId: "highlighter-7b30b",
-  storageBucket: "highlighter-7b30b.appspot.com",
-  messagingSenderId: "252244488016",
-  appId: "1:252244488016:web:101c1d7fb3c7c8f7f74655",
-  measurementId: "G-5E8WYRQ1E7",
-  databaseURL: "https://highlighter-7b30b-default-rtdb.firebaseio.com",
+  apiKey: "AIzaSyDYbHdqSMi46AvitDt8PUilpPcqNNcdfnk",
+  authDomain: "layr-34cbb.firebaseapp.com",
+  databaseURL: "https://layr-34cbb-default-rtdb.firebaseio.com",
+  projectId: "layr-34cbb",
+  storageBucket: "layr-34cbb.appspot.com",
+  messagingSenderId: "721318168067",
+  appId: "1:721318168067:web:19f4b85df6cd0d840b3036",
+  measurementId: "G-SL9EZXVFFN"
 };
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
