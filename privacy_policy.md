@@ -1,6 +1,6 @@
 # Privacy Policy
 
-This privacy policy lists what data we collect from users of 'highlighter' (the "extension"), in what way, and how we use this data.
+This privacy policy lists what data we collect from users of 'LAYR' (the "extension"), in what way, and how we use this data.
 This policy applies to all features of the extension and to all users of it.
 
 ## What we collect
