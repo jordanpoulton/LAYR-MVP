@@ -16,6 +16,7 @@ import openTabAndShowHighlight from "../actions/openTabAndShowHighlight.js";
 import { trackEvent } from "../analytics.js";
 import {
   addCommentToHighlight,
+  deleteHighlightById,
   getHighlightById,
   getHighlightsNotEqualToHref,
   storeHighlightInFirebase,
@@ -119,6 +120,9 @@ function initializeMessageEventListeners() {
         return true; // return asynchronously
       case "update-highlight-like-dislike-count":
         wrapResponse(updateLikeCount(request.payload), sendResponse);
+        return true; // return asynchronously
+      case "delete-highlight-by-id":
+        wrapResponse(deleteHighlightById(request.payload), sendResponse);
         return true; // return asynchronously
       case "open_side_panel":
         openSidepanel(_sender);

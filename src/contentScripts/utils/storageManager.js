@@ -140,21 +140,23 @@ async function update(
   }
 }
 
+async function getCurrentUser() {
+  return getFromBackgroundPage({ action: "get-current-user" });
+}
+
 async function setupFirebaseListeners(url, callback) {
   const urlRef = ref(db, "highlights/");
 
   // Listener for changes in the highlights
   onValue(urlRef, (snapshot) => {
-    const highlights = snapshot.val() ? Object.values(snapshot.val()) : [];
-    callback(highlights);
+    const allHighlights = snapshot.val() ? Object.values(snapshot.val()) : [];
+    // Filter highlights for the current URL
+    const filteredHighlights = allHighlights.filter(highlight => highlight.href === url);
+    callback(filteredHighlights);
   });
 
   // Return a function to detach the listener when no longer needed
   return () => off(urlRef);
-}
-
-async function getCurrentUser() {
-  return getFromBackgroundPage({ action: "get-current-user" });
 }
 
 async function loadAll(url, alternativeUrl) {
