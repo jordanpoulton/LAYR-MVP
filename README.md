@@ -4,7 +4,8 @@ A social LAYR on top of the internet itself - we allow you to upvote, downvote, 
 
 Available for [download on the Chrome web store]().
 
-# Pitch - Transforming Internet Discourse with Lightning and NOSTR Integration
+# Pitch
+## Transforming Internet Discourse with Lightning and NOSTR Integration
 
 I have a vision.
 
