@@ -155,7 +155,7 @@ async function updateLikeCount(payload) {
     );
 
     if (like) {
-      if (alreadyLiked) return; // User already liked this highlight
+      if (alreadyLiked) return highlightObject; // User already liked this highlight
 
       // Remove dislike if previously disliked
       if (alreadyDisliked) {
@@ -169,7 +169,7 @@ async function updateLikeCount(payload) {
       highlightObject.likes += 1;
       highlightObject.likedBy.push(user.username);
     } else {
-      if (alreadyDisliked) return; // User already disliked this highlight
+      if (alreadyDisliked) return highlightObject; // User already disliked this highlight
 
       // Remove like if previously liked
       if (alreadyLiked) {
