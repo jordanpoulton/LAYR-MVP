@@ -88,9 +88,10 @@ async function updateLikeCount(highlightIndex, like, user) {
       `.highlighter--highlighted[data-highlight-id='${highlightIndex}']`
     );
     $(".highlighter--hovered").removeClass("highlighter--hovered");
-
-    existingHighlight.css("backgroundColor", newHighlightObject.color); // Change the background color attribute
-    existingHighlight.css("color", newHighlightObject.textColor); // Also change the text color
+    if (newHighlightObject) {
+      existingHighlight.css("backgroundColor", newHighlightObject.color); // Change the background color attribute
+      existingHighlight.css("color", newHighlightObject.textColor); // Also change the text color
+    }
   }
 }
 
@@ -151,7 +152,9 @@ async function setupFirebaseListeners(url, callback) {
   onValue(urlRef, (snapshot) => {
     const allHighlights = snapshot.val() ? Object.values(snapshot.val()) : [];
     // Filter highlights for the current URL
-    const filteredHighlights = allHighlights.filter(highlight => highlight.href === url);
+    const filteredHighlights = allHighlights.filter(
+      (highlight) => highlight.href === url
+    );
     callback(filteredHighlights);
   });
 

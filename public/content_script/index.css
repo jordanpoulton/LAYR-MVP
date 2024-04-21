@@ -166,3 +166,11 @@
   border-radius: 5px;
   display: none;
 }
+
+#myModal {
+  display: none;
+}
+
+#errorModal {
+  display: none;
+}
